@@ -1,0 +1,139 @@
+{% extends "layout.html" %}
+	{% block content %}
+	<h1 id='primary_header' align="center">Seldonian Interface GUI</h1>
+	<div class="content-section">
+
+		<form method="post" action="">
+			{{ setup_form.hidden_tag() }}
+
+			<div class="form-group" id="regime">
+				{{ setup_form.regime.label }}
+				{{ setup_form.regime(class="form-control form-control-lg", onchange="regimeChange(this)") }}
+			</div>
+
+			<div class="form-group" id="sub-regime" style="display: block">
+				{{ setup_form.sub_regime.label }}
+				{{ setup_form.sub_regime(class="form-control form-control-lg",onchange="subregimeChange(this)") }}
+			</div>
+
+			<div class="form-group" id="sensitive_attrs" style="display: block">
+				{{ setup_form.sensitive_attributes.label }}
+				{{ setup_form.sensitive_attributes(class="form-control form-control-lg") }}
+			</div>
+
+			<h3 id='constraints' align="center">Build your constraints here: </h3>
+			<!-- List of base node choices to pick from here -->
+
+			<div class="container" align="center" id="classification_funcs">
+				{% set measure_functions = measure_functions_dict['supervised']['classification'] %}
+				{% for ii in range(measure_functions|length) %}
+					{% set measure_function = measure_functions[ii] %}
+					<button type="button" value="{{measure_function}}" onclick="add2str(this)">{{measure_function}}</button>
+				{% endfor %}
+			</div>
+
+			<div class="container" align="center" id="regression_funcs" style="display: none">
+				{% set measure_functions = measure_functions_dict['supervised']['regression'] %}
+				{% for ii in range(measure_functions|length) %}
+					{% set measure_function = measure_functions[ii] %}
+					<button type="button" value="{{measure_function}}" onclick="add2str(this)">{{measure_function}}</button>
+				{% endfor %}
+			</div>
+
+			<div class="container" align="center" id="RL_funcs" style="display: none">
+				{% set measure_functions = measure_functions_dict['RL']['all'] %}
+				{% for ii in range(measure_functions|length) %}
+					{% set measure_function = measure_functions[ii] %}
+					<button type="button" value="{{measure_function}}" onclick="add2str(this)">{{measure_function}}</button>
+				{% endfor %}
+			</div>
+			{% for ii in range(setup_form.constraint_forms|length) %}
+				
+				{% set constraint_form = setup_form.constraint_forms[ii] %}
+				<div class="form-group" id="constraint-{{ii}}">
+					<p> Constraint #{{ii+1}}: </p>
+					{{ constraint_form.constraint_str(disabled=true,class="form-control form-control-lg", oninput="checkConstraintValid(this)") }}
+
+				</div>
+			{% endfor %}
+			
+		</form>
+
+	</div>
+
+<script>
+function regimeChange(regime_field) {
+	var regime = regime_field.value;
+	let subregime_field = document.getElementById("sub-regime");
+	let sensitive_attrs_field = document.getElementById("sensitive_attrs");
+	
+	if (regime == "supervised") {
+		subregime_field.style.display = "block";
+		sensitive_attrs_field.style.display = "block";
+		var sub_regime = subregime_field.value;
+		if (sub_regime == "classification") {
+			var measure_functions_field = document.getElementById("classification_funcs");
+			var other_measure_functions_field1 = document.getElementById("regression_funcs");
+		}
+		else {
+			var measure_functions_field = document.getElementById("regression_funcs");
+			var other_measure_functions_field1 = document.getElementById("classification_funcs");
+		}
+		var other_measure_functions_field2 = document.getElementById("RL_funcs");
+
+	}
+
+	else {
+		var measure_functions_field = document.getElementById("RL_funcs");
+		var other_measure_functions_field1 = document.getElementById("classification_funcs");
+		var other_measure_functions_field2 = document.getElementById("regression_funcs");
+		subregime_field.style.display = "none";
+		sensitive_attrs_field.style.display = "none";
+	}
+	measure_functions_field.style.display = "block"
+	other_measure_functions_field1.style.display = "none"
+	other_measure_functions_field2.style.display = "none"
+	}
+
+function subregimeChange(subregime_field) {
+	
+	var sub_regime = subregime_field.value;
+	if (sub_regime == "classification") {
+		var measure_functions_field = document.getElementById("classification_funcs");
+		var other_measure_functions_field1 = document.getElementById("regression_funcs");
+	}
+	else {
+		var measure_functions_field = document.getElementById("regression_funcs");
+		var other_measure_functions_field1 = document.getElementById("classification_funcs")
+	}
+	var other_measure_functions_field2 = document.getElementById("RL_funcs");
+	
+	measure_functions_field.style.display = "block"
+	other_measure_functions_field1.style.display = "none"
+	other_measure_functions_field2.style.display = "none"
+	}
+
+function add2str(button_field) {
+	var measure_func = button_field.value;
+	constraint_field = document.getElementById("constraint_forms-0-constraint_str")
+	constraint_field.value += measure_func + " "
+	// console.log(measure_func);
+	// if (sub_regime == "classification") {
+	// 	var measure_functions_field = document.getElementById("classification_funcs");
+	// 	var other_measure_functions_field1 = document.getElementById("regression_funcs");
+	// }
+	// else {
+	// 	var measure_functions_field = document.getElementById("regression_funcs");
+	// 	var other_measure_functions_field1 = document.getElementById("classification_funcs")
+	// }
+	// var other_measure_functions_field2 = document.getElementById("RL_funcs");
+	
+	// measure_functions_field.style.display = "block"
+	// other_measure_functions_field1.style.display = "none"
+	// other_measure_functions_field2.style.display = "none"
+	}
+
+</script>
+
+
+{% endblock content %}

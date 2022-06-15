@@ -1,0 +1,14 @@
+**/__pycache__
+Digraph*
+**/prof
+regression_plots/
+**/*.egg-info/
+**/pyproject.toml
+**/outcmaes
+**/.DS_Store
+qsa*
+**/logs
+**/.coverage
+build
+dist
+*.pyc
