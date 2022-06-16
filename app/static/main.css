@@ -5,9 +5,24 @@
 }
 
 .target_grid_container {
-  display: grid;
+  display: flex;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;
+  background-color: #ededed;
+  padding: 10px;
+  width: 50%;
+}
+
+
+.newtargetbox {
+  border: 3px dotted #666;
+  border-radius: .5em;
+  padding: 10px;
+  cursor: move;
+}
+
+.newtargetbox.over {
+  background-color: #c9d400;
 }
 
 .sourcebox {
@@ -18,7 +33,7 @@
   cursor: move;
 }
 
-.targetbox {
+.usedtargetbox {
   border: 3px solid #666;
   background-color: #ddd;
   border-radius: .5em;
@@ -26,6 +41,18 @@
   cursor: move;
 }
 
-.targetbox.over {
+.usedtargetbox.over {
   border: 3px dotted #666;
+}
+
+
+.deletetargetbox {
+  border: 3px dotted #666;
+  border-radius: .5em;
+  padding: 10px;
+  cursor: move;
+}
+
+.deletetargetbox.over {
+  background-color: #fc0303;
 }

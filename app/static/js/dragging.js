@@ -21,10 +21,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
   function handleDragEnd(e) {
     // Applies to both
     this.style.opacity = '1';
-
-    targitems.forEach(function (item) {
-      item.classList.remove('over');
-    });
   }
 
   function handleDragOver(e) {
@@ -33,56 +29,154 @@ document.addEventListener('DOMContentLoaded', (event) => {
     return false;
   }
 
-  function handleDragEnterTarget(e) {
-    // Applies only to target
-    this.classList.add('over');
+  function handleDragEnter(e) {
+    // If source is sourcebox and target is newtargetbox or:
+    // If source is usedtargetbox and and target is either a usedtargetbox
+    // or a deletetargetbox,
+    // then add the over class, but otherwise don't
+    if ( 
+      (dragSrcEl.classList.contains('sourcebox')
+     && this.classList.contains('newtargetbox'))  || 
+
+      (dragSrcEl.classList.contains('usedtargetbox')
+     && (this.classList.contains('usedtargetbox') || 
+     this.classList.contains('deletetargetbox')))) 
+     {
+      this.classList.add('over');
+    }
   }
 
-  function handleDragLeaveTarget(e) {
+  function handleDragLeave(e) {
     // Applies only to target
     this.classList.remove('over');
   }
 
   function handleDrop(e) {
-    // Only applies to target
+    // dragSrcEl is the dragged source and "this" is the target
     e.stopPropagation(); // stops the browser from redirecting.
+    // remove over class
+    this.classList.remove('over');
+    
+    if (dragSrcEl !== this) {  
 
-    if (dragSrcEl !== this) {
-
-      // If the dragged source was already a target box, then swap its
-      // text with the target
-      if (dragSrcEl.classList.contains('targetbox') ) {
-        dragSrcEl.innerHTML = this.innerHTML;
-      }
       
-      // Update the target box's text
-      this.innerHTML = e.dataTransfer.getData('text/html');
+      // If source box was sourcebox,
+      // then only allow action on newtargetbox 
+      if (dragSrcEl.classList.contains('sourcebox') ) {
+        if (this.classList.contains('newtargetbox')) {
+
+          var clone = this.cloneNode(true);
+          this.draggable = true;
+          this.classList.remove('newtargetbox')
+          this.classList.add('usedtargetbox')
+          // Update the target box's text with the dragged box's text
+          this.innerHTML = e.dataTransfer.getData('text/html');
+
+          // change the event listeners from source to usedtarget
+          removeSourceBoxListeners(this);
+          addUsedTargetBoxListeners(this);
+
+          // create another newtargetbox so user can still add new node 
+          // and add it to the DOM
+          removeSourceBoxListeners(clone)
+          removeUsedTargetBoxListeners(clone)
+          addNewBoxListeners(clone)
+          this.after(clone);
+        };
+      };
+
+      // If source box was usedtargetbox then only allow action
+      // on usedtargetbox or removetargetbox
+      if (dragSrcEl.classList.contains('usedtargetbox') ) {
+        if (this.classList.contains('usedtargetbox')) {
+            // Update source box with target box's text and 
+            // the target box's text with the dragged box's text
+          dragSrcEl.innerHTML = this.innerHTML
+          this.innerHTML = e.dataTransfer.getData('text/html');
+        };
+        if (this.classList.contains('deletetargetbox')) {
+            // remove the source box
+            dragSrcEl.remove()
+        };
+      };
+
     }
-    // // If source box was moved to target box (not target to target),
-    // // then we need to make it a target box
-    if (dragSrcEl.classList.contains('sourcebox') ) {
-      this.classList.remove('sourcebox')
-      this.classList.add('targetbox')
-    }
+    
   return false;
 }
 
+
+  function addSourceBoxListeners(elem){
+    elem.addEventListener('dragstart', handleDragStartSource);
+    elem.addEventListener('dragover', handleDragOver);
+    elem.addEventListener('dragend', handleDragEnd);
+    elem.addEventListener('drop', handleDrop);
+  };
+
+  function removeSourceBoxListeners(elem){
+    elem.removeEventListener('dragstart', handleDragStartSource);
+    elem.removeEventListener('dragover', handleDragOver);
+    elem.removeEventListener('dragend', handleDragEnd);
+    elem.removeEventListener('drop', handleDrop);
+  };
+
+  function addUsedTargetBoxListeners(elem) {
+      elem.addEventListener('dragstart', handleDragStartTarget);
+      elem.addEventListener('dragover', handleDragOver);
+      elem.addEventListener('dragenter', handleDragEnter);
+      elem.addEventListener('dragleave', handleDragLeave);
+      elem.addEventListener('dragend', handleDragEnd);
+      elem.addEventListener('drop', handleDrop);
+  };
+
+  function removeUsedTargetBoxListeners(elem) {
+      elem.removeEventListener('dragstart', handleDragStartTarget);
+      elem.removeEventListener('dragover', handleDragOver);
+      elem.removeEventListener('dragenter', handleDragEnter);
+      elem.removeEventListener('dragleave', handleDragLeave);
+      elem.removeEventListener('dragend', handleDragEnd);
+      elem.removeEventListener('drop', handleDrop);
+  };
+  
+  function addNewBoxListeners(elem) {
+      elem.addEventListener('dragover', handleDragOver);
+      elem.addEventListener('dragenter', handleDragEnter);
+      elem.addEventListener('dragleave', handleDragLeave);
+      elem.addEventListener('dragend', handleDragEnd);
+      elem.addEventListener('drop', handleDrop);
+  };
+
+  function removeNewBoxListeners(elem) {
+      elem.addEventListener('dragover', handleDragOver);
+      elem.addEventListener('dragenter', handleDragEnter);
+      elem.addEventListener('dragleave', handleDragLeave);
+      elem.addEventListener('dragend', handleDragEnd);
+      elem.addEventListener('drop', handleDrop);
+  };
+
+    function addDeleteBoxListeners(elem) {
+      elem.addEventListener('dragover', handleDragOver);
+      elem.addEventListener('dragenter', handleDragEnter);
+      elem.addEventListener('dragleave', handleDragLeave);
+      elem.addEventListener('dragend', handleDragEnd);
+      elem.addEventListener('drop', handleDrop);
+  };
+
+  // Initialize the listeners at runtime
   let srcitems = document.querySelectorAll('.sourcebox');
   srcitems.forEach(function(item) {
-    item.addEventListener('dragstart', handleDragStartSource);
-    item.addEventListener('dragover', handleDragOver);
-    item.addEventListener('dragend', handleDragEnd);
-    item.addEventListener('drop', handleDrop);
-  });
-  
-  let targitems = document.querySelectorAll('.targetbox');
-  targitems.forEach(function(item) {
-    item.addEventListener('dragstart', handleDragStartTarget);
-    item.addEventListener('dragover', handleDragOver);
-    item.addEventListener('dragenter', handleDragEnterTarget);
-    item.addEventListener('dragleave', handleDragLeaveTarget);
-    item.addEventListener('dragend', handleDragEnd);
-    item.addEventListener('drop', handleDrop);
+    addSourceBoxListeners(item); 
   });
 
-});
+  const newelem = document.getElementById('onlynew');
+  addNewBoxListeners(newelem);
+
+  const delete_elem = document.getElementById('onlydelete');
+  addDeleteBoxListeners(delete_elem);
+
+  
+
+  
+
+  }); // end of file
+
