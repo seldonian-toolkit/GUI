@@ -37,7 +37,7 @@ class SetupForm(FlaskForm):
 
 	constraint_forms = FieldList(FormField(ConstraintForm),min_entries=1,max_entries=10)
 
-	# submit = SubmitField('Submit')
+	submit = SubmitField('Submit',id="submit_btn")
 
 
 # class BaseNodeForm(FlaskForm):

@@ -168,11 +168,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
     addSourceBoxListeners(item); 
   });
 
-  const newelem = document.getElementById('onlynew');
-  addNewBoxListeners(newelem);
+  let newitems = document.querySelectorAll('.newtargetbox');
+  newitems.forEach(function(item) {
+    addNewBoxListeners(item);
+  });
+  
 
-  const delete_elem = document.getElementById('onlydelete');
-  addDeleteBoxListeners(delete_elem);
+  let deleteitems = document.querySelectorAll('.deletetargetbox');
+  deleteitems.forEach(function(item) {
+    addDeleteBoxListeners(item);
+  });
+  
 
   
 

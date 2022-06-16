@@ -1,5 +1,14 @@
+.variable_group {
+  border: 3px solid #666;
+  background-color: #ddd;
+  border-radius: .5em;
+  padding: 10px;
+}
+
 .grid_container {
-  display: grid;
+  display: flex;
+  /*align-items: center;*/
+  justify-content: center;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;
 }
@@ -10,7 +19,6 @@
   gap: 10px;
   background-color: #ededed;
   padding: 10px;
-  width: 50%;
 }
 
 
@@ -51,6 +59,7 @@
   border-radius: .5em;
   padding: 10px;
   cursor: move;
+  margin-left: auto;
 }
 
 .deletetargetbox.over {
