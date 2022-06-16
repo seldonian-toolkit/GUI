@@ -47,7 +47,7 @@
 					<button type="button" value="{{measure_function}}" onclick="add2str(this)">{{measure_function}}</button>
 				{% endfor %}
 			</div>
-			{% for ii in range(setup_form.constraint_forms|length) %}
+			<!-- {% for ii in range(setup_form.constraint_forms|length) %}
 				
 				{% set constraint_form = setup_form.constraint_forms[ii] %}
 				<div class="form-group" id="constraint-{{ii}}">
@@ -55,7 +55,8 @@
 					{{ constraint_form.constraint_str(disabled=true,class="form-control form-control-lg", oninput="checkConstraintValid(this)") }}
 
 				</div>
-			{% endfor %}
+			{% endfor %} -->
+			
 			
 		</form>
 

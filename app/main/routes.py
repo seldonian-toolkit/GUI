@@ -24,3 +24,8 @@ def gui():
     return render_template('gui.html',setup_form=setup_form,
         measure_functions_dict=measure_functions_dict)
 
+@main.route("/test",methods=["GET","POST"]) 
+def test(): 
+    
+    return render_template('test.html')
+

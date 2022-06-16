@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+	{% block content %}
+	<h3> Options to drag from: </h3>
+	<div class="grid_container">
+	  <div draggable="true" class="sourcebox">A</div>
+	  <div draggable="true" class="sourcebox">B</div>
+	  <div draggable="true" class="sourcebox">C</div>
+	</div>
+	<hr>
+	<h3> Area to drag to:</h3>
+	<div class="target_grid_container">
+	  <div draggable="true" class="targetbox">D</div>
+	  <div draggable="true" class="targetbox">E</div>
+	  <div draggable="true" class="targetbox">F</div>
+	</div>
+
+
+<script src="static/js/dragging.js"></script>
+
+{% endblock content %}
