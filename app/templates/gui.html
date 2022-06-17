@@ -4,6 +4,7 @@
 	<div class="content-section">
 
 		<form method="post" onsubmit="submitFunction()" action="javascript:void(0);">
+		<!-- <form method="post" action=""> -->
 			{{ setup_form.csrf_token() }}
 
 			<div class="form-group" id="regime">
@@ -33,7 +34,7 @@
 					<div class='grid_container'>
 						{% for ii in range(measure_functions|length) %}
 							{% set measure_function = measure_functions[ii] %}
-							<div draggable="true" class="sourcebox">{{measure_function}}</div>
+							<div draggable="true" class="sourcebox" data-nodetype="measure_function">{{measure_function}}</div>
 						{% endfor %}
 					</div>
 
@@ -41,7 +42,7 @@
 					<div class='grid_container'>
 						{% for ii in range(math_operators|length) %}
 							{% set math_operator = math_operators[ii] %}
-							<div draggable="true" class="sourcebox">{{math_operator}}</div>
+							<div draggable="true" class="sourcebox" data-nodetype="math_operator">{{math_operator}}</div>
 						{% endfor %}
 					</div>
 
@@ -49,7 +50,7 @@
 					<div class='grid_container'>
 					{% for ii in range(math_functions|length) %}
 						{% set math_function = math_functions[ii] %}
-						<div draggable="true" class="sourcebox">{{math_function}}</div>
+						<div draggable="true" class="sourcebox" data-nodetype="math_function">{{math_function}}</div>
 					{% endfor %}
 					</div>
 
@@ -63,8 +64,24 @@
 			
 			<h3> Drag blocks here:</h3>
 			<div class="target_grid_container" id="target_grid_container">
-			  <div class="newtargetbox" id="onlynew">Drag block here to add</div>
-			  <div class="deletetargetbox" id="onlydelete">Drag block here to remove</div>
+				<div class="newtargetbox" id="onlynew">
+					Drag block here to add
+					<!-- <div class="dropdown">
+						<button type="button" onclick="editNode()" class="dropbtn edit-btn">Dropdown</button>
+						<select multiple="true" id="myDropdown" class="dropdown-content">
+							<option class='dropdown-option' value="apple">Apple</option>
+							<option class='dropdown-option' value="banana">Banana</option>
+							<option class='dropdown-option' value="mango">Mango</option>
+							<option class='dropdown-option' value="grape">Grape</option>
+							<option class='dropdown-option' value="watermelon">watermelon</option>
+						</select>
+					</div> -->
+				
+				</div>
+				<div class="deletetargetbox" id="onlydelete">
+					Drag block here to remove
+				</div>
+			
 			</div>
 			
 			<div class="form-group" >
@@ -75,105 +92,43 @@
 
 	</div>
 
-<script>
-function regimeChange(regime_field) {
-	var regime = regime_field.value;
-	let subregime_field = document.getElementById("sub-regime");
-	let sensitive_attrs_field = document.getElementById("sensitive_attrs");
-	
-	if (regime == "supervised") {
-		subregime_field.style.display = "block";
-		sensitive_attrs_field.style.display = "block";
-		var sub_regime = subregime_field.value;
-		if (sub_regime == "classification") {
-			var measure_functions_field = document.getElementById("classification_funcs");
-			var other_measure_functions_field1 = document.getElementById("regression_funcs");
-		}
-		else {
-			var measure_functions_field = document.getElementById("regression_funcs");
-			var other_measure_functions_field1 = document.getElementById("classification_funcs");
-		}
-		var other_measure_functions_field2 = document.getElementById("RL_funcs");
-
-	}
-
-	else {
-		var measure_functions_field = document.getElementById("RL_funcs");
-		var other_measure_functions_field1 = document.getElementById("classification_funcs");
-		var other_measure_functions_field2 = document.getElementById("regression_funcs");
-		subregime_field.style.display = "none";
-		sensitive_attrs_field.style.display = "none";
-	}
-	measure_functions_field.style.display = "block"
-	other_measure_functions_field1.style.display = "none"
-	other_measure_functions_field2.style.display = "none"
-	}
-
-function subregimeChange(subregime_field) {
-	
-	var sub_regime = subregime_field.value;
-	if (sub_regime == "classification") {
-		var measure_functions_field = document.getElementById("classification_funcs");
-		var other_measure_functions_field1 = document.getElementById("regression_funcs");
-	}
-	else {
-		var measure_functions_field = document.getElementById("regression_funcs");
-		var other_measure_functions_field1 = document.getElementById("classification_funcs")
-	}
-	var other_measure_functions_field2 = document.getElementById("RL_funcs");
-	
-	measure_functions_field.style.display = "block"
-	other_measure_functions_field1.style.display = "none"
-	other_measure_functions_field2.style.display = "none"
-	}
-
-function submitFunction() {
-
-	var csrf_token = "{{ csrf_token() }}";
-    var parentDiv = document.getElementById('target_grid_container')
-    var childnodes = parentDiv.childNodes;
-
-    var constraintStr = ""
-    childnodes.forEach(function(child) {
-    	if ((child.tagName == 'DIV') && child.classList.contains("usedtargetbox")) {
-    		constraintStr += child.innerHTML
-    	}
-    });
-    // var thediv = $("#target_grid_container").html();
-
-    $.ajax({
-            type: 'POST',
-            contentType: 'application/json',
-            url: '/process_constraints',
-            data: JSON.stringify({data:constraintStr}),
-            datatype:'json',
-            headers: {"X-CSRFToken":csrf_token},
-            success: function(data) {
-            	window.location = data;
-                console.log("success")
-            },
-            error: function() {
-                alert("Oops! Something went wrong.");
-            }
-    });
-  //   $.ajax({
-		//   type: "POST",
-		//   contentType: "application/json; charset=utf-8",
-		//   url: "/process_constraints",
-		//   data: JSON.stringify({title: 'hallo', article: 'test'}),
-		//   success: function (data) {
-		//     console.log(data.title);
-		//     console.log(data.article);
-		//   },
-		//   dataType: "json"
-		// });
-} 
-
-</script>
+<script src="static/js/gui.js"></script>
 
 <script src="static/js/dragging.js"></script>
  
+<script type="text/javascript">
 
+function submitFunction() {
+
+	let csrf_token = "{{ csrf_token() }}";
+	let parentDiv = document.getElementById('target_grid_container')
+	let childnodes = parentDiv.childNodes;
+
+	let constraintStr = ""
+	childnodes.forEach(function(child) {
+		if ((child.tagName == 'DIV') && (child.classList.contains("usedtargetbox")) ) {
+			constraintStr += child.innerText
+		}
+	});
+	console.log(constraintStr)
+	$.ajax({
+			type: 'POST',
+			contentType: 'application/json',
+			url: '/process_constraints',
+			data: JSON.stringify({data:constraintStr}),
+			datatype:'json',
+			headers: {"X-CSRFToken":csrf_token},
+			success: function(data) {
+				// window.location = data;
+				console.log("success")
+			},
+			error: function() {
+				alert("Oops! Something went wrong.");
+			}
+	});
+} 
+
+</script>
 
 
 {% endblock content %}

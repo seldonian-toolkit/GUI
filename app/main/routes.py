@@ -12,8 +12,6 @@ from seldonian.parse_tree.operators import measure_functions_dict
 math_operators = ['+','-','*','/']
 math_functions = ['min','max','abs','exp']
 
-str_to_remove = '<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">'
-
 main = Blueprint('main',__name__)
 
 @main.route("/",methods=["GET"]) 
@@ -23,6 +21,10 @@ def home():
 @main.route("/gui",methods=["GET","POST"]) 
 def gui(): 
     setup_form = SetupForm()
+    setup_form.sensitive_attributes.data = "M,F"
+    if request.method == 'POST':
+        print(request.form)
+
     return render_template('gui.html',setup_form=setup_form,
         measure_functions_dict=measure_functions_dict,
         math_operators=math_operators,
@@ -31,16 +33,12 @@ def gui():
 @main.route("/process_constraints",methods=["GET","POST"]) 
 def process_constraints(): 
     print("Inside process_constraints()")
+    # print(request.form)
+    print(request.json)
     constraint_str = request.json['data']
-    constraint_str = constraint_str.replace(str_to_remove,"")
     print("The constraint is: ")
     print(constraint_str)
-
-    # data = request.json['data']
-    # print(data)
-    # print(divinfo)
     return url_for("main.gui")
-    # return jsonify(title="test", article="article")
 
 @main.route("/test",methods=["GET","POST"]) 
 def test(): 
