@@ -31,7 +31,7 @@
 }
 
 .newtargetbox.over {
-  background-color: #c9d400;
+  background-color: #03fc17;
 }
 
 .sourcebox {
@@ -44,6 +44,13 @@
 
 .usedtargetbox {
   border: 3px solid #666;
+  background-color: #ddd;
+  border-radius: .5em;
+  padding: 10px;
+  cursor: move;
+}
+
+.nestedusedtargetbox {
   background-color: #ddd;
   border-radius: .5em;
   padding: 10px;

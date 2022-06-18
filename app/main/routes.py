@@ -10,7 +10,7 @@ import os
 from seldonian.parse_tree.operators import measure_functions_dict
 # from seldonian.io_utils import load_json
 math_operators = ['+','-','*','/']
-math_functions = ['min','max','abs','exp']
+math_functions = ['min()','max()','abs()','exp()']
 
 main = Blueprint('main',__name__)
 

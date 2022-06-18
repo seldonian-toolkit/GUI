@@ -30,17 +30,27 @@ document.addEventListener('DOMContentLoaded', (event) => {
   }
 
   function handleDragEnter(e) {
-    // If source is sourcebox and target is newtargetbox or:
-    // If source is usedtargetbox and and target is either a usedtargetbox
+
+    // figure out source and target box class
+    let source_box_class = getBoxClass(dragSrcEl)
+    let target_box_class = getBoxClass(this)
+    
+    // figure out source and target node types:
+    source_node_type = dragSrcEl.getAttribute('data-nodetype')
+    target_node_type = this.getAttribute('data-nodetype')
+    // If source is sourcebox and target is newtargetbox or
+    // a usedtargetbox that is a math function
+    
+    // If source is usedtargetbox and target is either a usedtargetbox
     // or a deletetargetbox,
     // then add the over class, but otherwise don't
     if ( 
-      (dragSrcEl.classList.contains('sourcebox')
-     && this.classList.contains('newtargetbox'))  || 
-
-      (dragSrcEl.classList.contains('usedtargetbox')
-     && (this.classList.contains('usedtargetbox') || 
-     this.classList.contains('deletetargetbox')))) 
+      ((source_box_class == 'sourcebox' && source_node_type) ||
+      (source_node_type == 'measure_function' && target_node_type == 'math_function')) || 
+     
+      (source_box_class == 'usedtargetbox' && 
+        (target_box_class == 'usedtargetbox' || target_box_class == 'deletetargetbox'))
+      )
      {
       this.classList.add('over');
     }
@@ -60,19 +70,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
     if (dragSrcEl !== this) {  
 
-      // If source box was sourcebox,
-      // then only allow action on newtargetbox,
-      // which is to create a usedtargetbox
+      // If source box is sourcebox
       if (dragSrcEl.classList.contains('sourcebox') ) {
+        // If target box is newtargetbox
         if (this.classList.contains('newtargetbox')) {
 
           var clone = this.cloneNode(true);
+
           this.draggable = true;
           this.classList.remove('newtargetbox')
           this.classList.add('usedtargetbox')
+          source_node_type = dragSrcEl.getAttribute('data-nodetype')
+          this.setAttribute('data-nodetype',source_node_type)
 
           // Update the target box's text with the dragged box's text
-          this.innerHTML = e.dataTransfer.getData('text/plain');
+          this.innerText = "";
 
           // Update the target box's id to this text as well
           this.id = e.dataTransfer.getData('text/plain');
@@ -82,44 +94,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
           if (node_type == 'measure_function') {
             // Add the dropdown div to this element as a child
-            const dropdownDiv = document.createElement('div');
-            dropdownDiv.classList.add('dropdown');
-            
-            // Create the select element which will initially be hidden
-            select = document.createElement('select')
-            select.classList.add(['dropdown-content'])
-            select.setAttribute('multiple',true)
-            select.addEventListener('change', function(){
-                updateNodeText(this);
-            });
-            
-            // Figure out what the current sensitive attributes are
-            // and make select options out of them
-            currAtrs = document.getElementById("sensitive_attrs").children[1].value
-            if (currAtrs != '') {
-              // split string into a list
-              var atrArr = currAtrs.split(',');
-              atrArr.forEach(function(atr) {
-                var option = document.createElement("option");
-                option.text = atr;
-                option.value = atr;
-                option.classList.add('dropdown-option')
-                select.appendChild(option);
-              });
-            }
-            
-            button = document.createElement('button')
-            button.type = "button"
-            button.classList.add('dropbtn','edit-btn')
-            button.addEventListener('click', function(){
-                toggleDropdown(this);
-            });
-            
-            button.textContent = "Dropdown"
-            dropdownDiv.appendChild(button)
-            dropdownDiv.appendChild(select)
-
-            this.appendChild(dropdownDiv)
+            let dropdown = createDropdown(this);
+            this.appendChild(dropdown);
           }
           // change the event listeners from source to usedtarget
           removeSourceBoxListeners(this);
@@ -131,12 +107,32 @@ document.addEventListener('DOMContentLoaded', (event) => {
           removeUsedTargetBoxListeners(clone)
           addNewBoxListeners(clone)
           this.after(clone);
-        };
-      };
+        }
 
-      // If source box was usedtargetbox then only allow action
-      // on usedtargetbox or removetargetbox
-      if (dragSrcEl.classList.contains('usedtargetbox') ) {
+        // If target box is usedtargetbox,
+        // only allowed if source box is a base node and 
+        // target box is a math function, e.g. min(PR) is allowed
+        else if (this.classList.contains('usedtargetbox')) {
+          if ((dragSrcEl.getAttribute('data-nodetype') == 'measure_function') && 
+            (this.getAttribute('data-nodetype') == 'math_function')) {
+              console.log("Attempting a composition")
+              // // A a new div inside of the div
+              // const newDiv = document.createElement('div');
+              // newDiv.classList.add('nestedusedtargetbox');
+
+              // source_node_type = dragSrcEl.getAttribute('data-nodetype')
+              // newDiv.setAttribute('data-nodetype',source_node_type)
+
+              // Update the parent box's text with the dragged box's text
+              curText = this.innerHTML // should be something like "function()"
+              let newText = curText.slice(0,-1) + e.dataTransfer.getData('text/plain') + ")"
+              this.innerHTML = newText 
+              // this.appendChild(newDiv)
+            }
+        }
+      }
+
+      else if (dragSrcEl.classList.contains('usedtargetbox') ) {
         if (this.classList.contains('usedtargetbox')) {
             // Update source box with target box's text and 
             // the target box's text with the dragged box's text
@@ -154,15 +150,58 @@ document.addEventListener('DOMContentLoaded', (event) => {
   return false;
 }
 
-  function toggleDropdown(elem) {
+function createDropdown(elem) {
+  // Create a dropdown menu and return it
+  const dropdownDiv = document.createElement('div');
+  dropdownDiv.classList.add('dropdown');
+  
+  // Create the select element which will initially be hidden
+  select = document.createElement('select')
+  select.classList.add(['dropdown-content'])
+  select.setAttribute('multiple',true)
+  select.addEventListener('change', function(){
+      updateNodeText(this);
+  });
+  
+  // Figure out what the current sensitive attributes are
+  // and make select options out of them
+  currAtrs = document.getElementById("sensitive_attrs").children[1].value
+  if (currAtrs != '') {
+    // split string into a list
+    var atrArr = currAtrs.split(',');
+    atrArr.forEach(function(atr) {
+      var option = document.createElement("option");
+      option.text = atr;
+      option.value = atr;
+      option.classList.add('dropdown-option')
+      select.appendChild(option);
+    });
+  }
+  
+  button = document.createElement('button')
+  button.type = "button"
+  button.classList.add('dropbtn','edit-btn')
+  button.addEventListener('click', function(){
+      toggleDropdown(this);
+  });
+  
+  button.textContent = elem.id
+  dropdownDiv.appendChild(button)
+  dropdownDiv.appendChild(select)
+
+  return dropdownDiv
+  };
+
+function toggleDropdown(elem) {
     let selectElem = elem.nextElementSibling;
     selectElem.classList.toggle('show')
   }
 
 function updateNodeText(selectElem) {
   // Get the current text of the basenode
-  let curText = selectElem.parentNode.parentNode.id
-  // console.log(curText)
+  let parentDiv = selectElem.parentNode.parentNode
+  let baseNodeStr = parentDiv.id
+  
   let newText = "";
 
   // Loop through all selected options and update the text
@@ -180,96 +219,125 @@ function updateNodeText(selectElem) {
     }
 
     if (selectedStrs.length > 0) {
-      newText += "( " + curText + " | " + "["
+      newText += "( " + baseNodeStr + " | " + "["
       newText += selectedStrs.join(',')
       newText += "] )"
     }
     else {
-      newText = curText
+      newText = baseNodeStr
     }
     
   }
+  // Update button text with new text
+  // 
+  let button = selectElem.previousElementSibling
+  button.textContent = newText;
   // console.log(newText)
-  selectElem.parentNode.parentNode.childNodes[0].textContent = newText
+  // selectElem.parentNode.parentNode.childNodes[0].textContent = newText
   // [1].textContent = newText
   // let newText = 
     // let selectElem = elem.nextElementSibling;
     // selectElem.classList.toggle('show')
   }
-  
 
-  function addSourceBoxListeners(elem){
-    elem.addEventListener('dragstart', handleDragStartSource);
+function getBoxClass(elem) {
+  let box_class 
+  
+  if (elem.classList.contains('sourcebox')) {
+    box_class = 'sourcebox'
+  }
+
+  if (elem.classList.contains('usedtargetbox')) {
+    box_class = 'usedtargetbox'
+  }
+
+  if (elem.classList.contains('newtargetbox')) {
+    box_class = 'newtargetbox'
+  }
+
+  if (elem.classList.contains('usedtargetbox')) {
+    box_class = 'usedtargetbox'
+  }
+
+  if (elem.classList.contains('deletetargetbox')) {
+    box_class = 'deletetargetbox'
+  }
+
+  return box_class
+  };
+
+function addSourceBoxListeners(elem){
+  elem.addEventListener('dragstart', handleDragStartSource);
+  elem.addEventListener('dragover', handleDragOver);
+  elem.addEventListener('dragend', handleDragEnd);
+  elem.addEventListener('drop', handleDrop);
+  };
+
+function removeSourceBoxListeners(elem){
+  elem.removeEventListener('dragstart', handleDragStartSource);
+  elem.removeEventListener('dragover', handleDragOver);
+  elem.removeEventListener('dragend', handleDragEnd);
+  elem.removeEventListener('drop', handleDrop);
+  };
+
+function addUsedTargetBoxListeners(elem) {
+    elem.addEventListener('dragstart', handleDragStartTarget);
     elem.addEventListener('dragover', handleDragOver);
+    elem.addEventListener('dragenter', handleDragEnter);
+    elem.addEventListener('dragleave', handleDragLeave);
     elem.addEventListener('dragend', handleDragEnd);
     elem.addEventListener('drop', handleDrop);
   };
 
-  function removeSourceBoxListeners(elem){
-    elem.removeEventListener('dragstart', handleDragStartSource);
+function removeUsedTargetBoxListeners(elem) {
+    elem.removeEventListener('dragstart', handleDragStartTarget);
     elem.removeEventListener('dragover', handleDragOver);
+    elem.removeEventListener('dragenter', handleDragEnter);
+    elem.removeEventListener('dragleave', handleDragLeave);
     elem.removeEventListener('dragend', handleDragEnd);
     elem.removeEventListener('drop', handleDrop);
   };
 
-  function addUsedTargetBoxListeners(elem) {
-      elem.addEventListener('dragstart', handleDragStartTarget);
-      elem.addEventListener('dragover', handleDragOver);
-      elem.addEventListener('dragenter', handleDragEnter);
-      elem.addEventListener('dragleave', handleDragLeave);
-      elem.addEventListener('dragend', handleDragEnd);
-      elem.addEventListener('drop', handleDrop);
+function addNewBoxListeners(elem) {
+    elem.addEventListener('dragover', handleDragOver);
+    elem.addEventListener('dragenter', handleDragEnter);
+    elem.addEventListener('dragleave', handleDragLeave);
+    elem.addEventListener('dragend', handleDragEnd);
+    elem.addEventListener('drop', handleDrop);
   };
 
-  function removeUsedTargetBoxListeners(elem) {
-      elem.removeEventListener('dragstart', handleDragStartTarget);
-      elem.removeEventListener('dragover', handleDragOver);
-      elem.removeEventListener('dragenter', handleDragEnter);
-      elem.removeEventListener('dragleave', handleDragLeave);
-      elem.removeEventListener('dragend', handleDragEnd);
-      elem.removeEventListener('drop', handleDrop);
-  };
-  
-  function addNewBoxListeners(elem) {
-      elem.addEventListener('dragover', handleDragOver);
-      elem.addEventListener('dragenter', handleDragEnter);
-      elem.addEventListener('dragleave', handleDragLeave);
-      elem.addEventListener('dragend', handleDragEnd);
-      elem.addEventListener('drop', handleDrop);
+function removeNewBoxListeners(elem) {
+    elem.addEventListener('dragover', handleDragOver);
+    elem.addEventListener('dragenter', handleDragEnter);
+    elem.addEventListener('dragleave', handleDragLeave);
+    elem.addEventListener('dragend', handleDragEnd);
+    elem.addEventListener('drop', handleDrop);
   };
 
-  function removeNewBoxListeners(elem) {
-      elem.addEventListener('dragover', handleDragOver);
-      elem.addEventListener('dragenter', handleDragEnter);
-      elem.addEventListener('dragleave', handleDragLeave);
-      elem.addEventListener('dragend', handleDragEnd);
-      elem.addEventListener('drop', handleDrop);
+function addDeleteBoxListeners(elem) {
+    elem.addEventListener('dragover', handleDragOver);
+    elem.addEventListener('dragenter', handleDragEnter);
+    elem.addEventListener('dragleave', handleDragLeave);
+    elem.addEventListener('dragend', handleDragEnd);
+    elem.addEventListener('drop', handleDrop);
   };
 
-    function addDeleteBoxListeners(elem) {
-      elem.addEventListener('dragover', handleDragOver);
-      elem.addEventListener('dragenter', handleDragEnter);
-      elem.addEventListener('dragleave', handleDragLeave);
-      elem.addEventListener('dragend', handleDragEnd);
-      elem.addEventListener('drop', handleDrop);
-  };
+// Initialize the listeners at runtime
+let srcitems = document.querySelectorAll('.sourcebox');
+srcitems.forEach(function(item) {
+  addSourceBoxListeners(item); 
+});
 
-  // Initialize the listeners at runtime
-  let srcitems = document.querySelectorAll('.sourcebox');
-  srcitems.forEach(function(item) {
-    addSourceBoxListeners(item); 
-  });
+let newitems = document.querySelectorAll('.newtargetbox');
+newitems.forEach(function(item) {
+  addNewBoxListeners(item);
+});
 
-  let newitems = document.querySelectorAll('.newtargetbox');
-  newitems.forEach(function(item) {
-    addNewBoxListeners(item);
-  });
-  
 
-  let deleteitems = document.querySelectorAll('.deletetargetbox');
-  deleteitems.forEach(function(item) {
-    addDeleteBoxListeners(item);
-  });
+let deleteitems = document.querySelectorAll('.deletetargetbox');
+deleteitems.forEach(function(item) {
+  addDeleteBoxListeners(item);
+});
   
 
   
