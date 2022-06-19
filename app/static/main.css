@@ -14,7 +14,7 @@
 }
 
 .target_grid_container {
-  display: flex;
+  display: inline-grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;
   background-color: #ededed;
@@ -43,23 +43,34 @@
 }
 
 .usedtargetbox {
+  display:  flex;
   border: 3px solid #666;
   background-color: #ddd;
   border-radius: .5em;
   padding: 10px;
   cursor: move;
-}
-
-.nestedusedtargetbox {
-  background-color: #ddd;
-  border-radius: .5em;
-  padding: 10px;
-  cursor: move;
+  justify-content: center;
+  align-items: center;
 }
 
 .usedtargetbox.over {
   border: 3px dotted #666;
 }
+
+
+.disabled-btn{
+  pointer-events: none;
+  display:  flex;
+
+  /*transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);*/
+  background-color: #000000;
+  color: white;
+  font-size: 14px;
+  margin:  auto;
+  border-radius: 5px;
+}
+
 
 
 .deletetargetbox {
@@ -75,25 +86,52 @@
 }
 
 
-/* Style the button and place it in the middle of the container/image */
+/*.childtargetbox {
+  border: none;
+  background-color: #ddd;
+  border-radius: .5em;
+  padding: 10px;
+  cursor: move;
+}*/
+
+.newtextnode {
+  margin:  auto;
+  font-size: 20px;
+}
+
 .edit-btn {
-  display:  flex;
+  display:  grid;
+  /*float: left; */
+  white-space: nowrap;
 
   /*transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);*/
   background-color: #fcba03;
   color: white;
-  font-size: 12px;
+  font-size: 14px;
   margin:  auto;
   border-radius: 5px;
 }
 
-.edit-.btn:hover {
+.edit-btn:hover {
   background-color: black;
 }
 
-.dropbtn:hover, .dropbtn:focus {
-  background-color: #2980B9;
+
+.newarg-btn {
+  display:  flex;
+
+  /*transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);*/
+  background-color: #025dfa;
+  color: white;
+  font-size: 14px;
+  margin:  auto;
+  border-radius: 5px;
+}
+
+.newarg-btn:hover {
+  background-color: black;
 }
 
 .dropdown {
@@ -110,13 +148,6 @@
   overflow: auto;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
-}
-
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
 }
 
 .show {display: block;}

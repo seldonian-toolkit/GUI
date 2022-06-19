@@ -34,7 +34,7 @@
 					<div class='grid_container'>
 						{% for ii in range(measure_functions|length) %}
 							{% set measure_function = measure_functions[ii] %}
-							<div draggable="true" class="sourcebox" data-nodetype="measure_function">{{measure_function}}</div>
+							<div id="{{measure_function}}" draggable="true" class="sourcebox" data-nodetype="measure_function">{{measure_function}}</div>
 						{% endfor %}
 					</div>
 
@@ -42,7 +42,7 @@
 					<div class='grid_container'>
 						{% for ii in range(math_operators|length) %}
 							{% set math_operator = math_operators[ii] %}
-							<div draggable="true" class="sourcebox" data-nodetype="math_operator">{{math_operator}}</div>
+							<div id="{{math_operator}}" draggable="true" class="sourcebox" data-nodetype="math_operator">{{math_operator}}</div>
 						{% endfor %}
 					</div>
 
@@ -50,13 +50,13 @@
 					<div class='grid_container'>
 					{% for ii in range(math_functions|length) %}
 						{% set math_function = math_functions[ii] %}
-						<div draggable="true" class="sourcebox" data-nodetype="math_function">{{math_function}}</div>
+						<div id="{{math_function}}"draggable="true" class="sourcebox" data-nodetype="math_function">{{math_function}}</div>
 					{% endfor %}
 					</div>
 
 					<h5 class='mt-4'>Constant (editable):</h5>
 					<div class='grid_container'>
-						<div contentEditable="true" draggable="true" class="sourcebox" data-nodetype="constant">1.0</div>
+						<div id="constant" contentEditable="true" draggable="true" class="sourcebox" data-nodetype="constant">1.0</div>
 					</div>
 				</div>
 			</div>
@@ -67,7 +67,7 @@
 				<div class="newtargetbox" id="onlynew">
 					Drag block here to add
 					<!-- <div class="dropdown">
-						<button type="button" onclick="editNode()" class="dropbtn edit-btn">Dropdown</button>
+						<button type="button" onclick="editNode()" class="edit-btn">Dropdown</button>
 						<select multiple="true" id="myDropdown" class="dropdown-content">
 							<option class='dropdown-option' value="apple">Apple</option>
 							<option class='dropdown-option' value="banana">Banana</option>

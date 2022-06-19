@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', (event) => {
 
   function handleDragStartSource(e) {
-    // Only applies to source 
+    // Only applies to source
+    e.stopPropagation() 
     this.style.opacity = '0.4';
     dragSrcEl = this;
     e.dataTransfer.effectAllowed = 'copyMove';
@@ -11,6 +12,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
   function handleDragStartTarget(e) {
     // Only applies to target
+    e.stopPropagation()
+
     this.style.opacity = '0.4';
     dragSrcEl = this;
     e.dataTransfer.effectAllowed = 'Move';
@@ -30,31 +33,38 @@ document.addEventListener('DOMContentLoaded', (event) => {
   }
 
   function handleDragEnter(e) {
-
+    e.stopPropagation()
     // figure out source and target box class
     let source_box_class = getBoxClass(dragSrcEl)
     let target_box_class = getBoxClass(this)
     
     // figure out source and target node types:
-    source_node_type = dragSrcEl.getAttribute('data-nodetype')
-    target_node_type = this.getAttribute('data-nodetype')
-    // If source is sourcebox and target is newtargetbox or
-    // a usedtargetbox that is a math function
+    let source_node_type = dragSrcEl.getAttribute('data-nodetype')
+    let target_node_type = this.getAttribute('data-nodetype')
+
+
     
-    // If source is usedtargetbox and target is either a usedtargetbox
-    // or a deletetargetbox,
-    // then add the over class, but otherwise don't
     if ( 
-      ((source_box_class == 'sourcebox' && source_node_type) ||
-      (source_node_type == 'measure_function' && target_node_type == 'math_function')) || 
+        (
+          source_box_class == 'sourcebox' &&
+            (
+              target_box_class == 'newtargetbox' || 
+              target_node_type == 'math_function'
+            )
+        ) || 
      
-      (source_box_class == 'usedtargetbox' && 
-        (target_box_class == 'usedtargetbox' || target_box_class == 'deletetargetbox'))
+        (
+          source_box_class == 'usedtargetbox' && 
+          (
+            target_box_class == 'usedtargetbox' || 
+            target_box_class == 'deletetargetbox'
+          )
+        )
       )
-     {
+    {
       this.classList.add('over');
     }
-  }
+  };
 
   function handleDragLeave(e) {
     // Applies only to target
@@ -65,38 +75,61 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // dragSrcEl is the dragged source and "this" is the target
     e.stopPropagation(); // stops the browser from redirecting.
     
+    let source_box_class = getBoxClass(dragSrcEl);
+    let target_box_class = getBoxClass(this);
+
+    let source_node_type = dragSrcEl.getAttribute('data-nodetype')
+    let target_node_type = this.getAttribute('data-nodetype')
     // remove "over" class
     this.classList.remove('over');
     
     if (dragSrcEl !== this) {  
 
-      // If source box is sourcebox
-      if (dragSrcEl.classList.contains('sourcebox') ) {
-        // If target box is newtargetbox
-        if (this.classList.contains('newtargetbox')) {
+      if (source_box_class == 'sourcebox' ) {
+        
+        if (target_box_class == 'newtargetbox') {
 
           var clone = this.cloneNode(true);
 
           this.draggable = true;
           this.classList.remove('newtargetbox')
           this.classList.add('usedtargetbox')
-          source_node_type = dragSrcEl.getAttribute('data-nodetype')
+          
           this.setAttribute('data-nodetype',source_node_type)
+          // Add button if the source was a math function
+          // Add dropdown if the source was a measure function
+          if (source_node_type == 'measure_function') {
+            // Update the target box's text with the dragged box's text
+            this.innerText = "";
 
-          // Update the target box's text with the dragged box's text
-          this.innerText = "";
-
-          // Update the target box's id to this text as well
-          this.id = e.dataTransfer.getData('text/plain');
-
-          // Only add dropdown if the source was a measure function
-          node_type = dragSrcEl.getAttribute('data-nodetype')
-
-          if (node_type == 'measure_function') {
+            // Update the target box's id to this text as well
+            this.id = e.dataTransfer.getData('text/plain');
             // Add the dropdown div to this element as a child
             let dropdown = createDropdown(this);
             this.appendChild(dropdown);
           }
+
+          else if (source_node_type == 'math_function' ) {
+            // Update the target box's text with the dragged box's text
+            this.innerText = "";
+
+            // Update the target box's id to this text as well
+            this.id = e.dataTransfer.getData('text/plain');
+            // Add the button div to this element as a child
+            if (singleArgMathFuncs.includes(dragSrcEl.id)) {
+              let button = createFunctionDisabledButton(this)
+            }
+            else {
+              let button = createFunctionButton(this);
+            }
+            this.appendChild(button);
+          }
+
+          else {
+            this.id = dragSrcEl.id
+            // Update the target box's text with the dragged box's text
+            this.innerText = e.dataTransfer.getData('text/plain');
+          };
           // change the event listeners from source to usedtarget
           removeSourceBoxListeners(this);
           addUsedTargetBoxListeners(this);
@@ -110,26 +143,64 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
 
         // If target box is usedtargetbox,
-        // only allowed if source box is a base node and 
-        // target box is a math function, e.g. min(PR) is allowed
-        else if (this.classList.contains('usedtargetbox')) {
-          if ((dragSrcEl.getAttribute('data-nodetype') == 'measure_function') && 
-            (this.getAttribute('data-nodetype') == 'math_function')) {
-              console.log("Attempting a composition")
-              // // A a new div inside of the div
-              // const newDiv = document.createElement('div');
-              // newDiv.classList.add('nestedusedtargetbox');
+        // only allowed if target node type is a
+        // math function 
+        else if 
+          (
+            target_box_class == 'usedtargetbox' &&   
+            target_node_type == 'math_function'
+            )
+        {
+          
+          // Create a new div inside of the parent div
+          const newDiv = document.createElement('div');
+          newDiv.draggable = true;
+          newDiv.classList.add('usedtargetbox');
+          
+          // What was the source node type
+          source_node_type = dragSrcEl.getAttribute('data-nodetype')
+          newDiv.setAttribute('data-nodetype',source_node_type)
 
-              // source_node_type = dragSrcEl.getAttribute('data-nodetype')
-              // newDiv.setAttribute('data-nodetype',source_node_type)
+           // Only add dropdown if the source was a measure function
+          node_type = dragSrcEl.getAttribute('data-nodetype')
 
-              // Update the parent box's text with the dragged box's text
-              curText = this.innerHTML // should be something like "function()"
-              let newText = curText.slice(0,-1) + e.dataTransfer.getData('text/plain') + ")"
-              this.innerHTML = newText 
-              // this.appendChild(newDiv)
-            }
+          if (node_type == 'measure_function') {
+            // Update the target box's text with the dragged box's text
+            newDiv.innerText = "";
+
+            // Update the target box's id to newDiv text as well
+            newDiv.id = e.dataTransfer.getData('text/plain');
+            // Add the dropdown div to newDiv element as a child
+            let dropdown = createDropdown(newDiv);
+            newDiv.appendChild(dropdown);
+          }
+
+          // Add button if the source was a math function
+          else if (node_type == 'math_function') {
+            // Update the target box's text with the dragged box's text
+            newDiv.innerText = "";
+
+            // Update the target box's id to newDiv text as well
+            newDiv.id = e.dataTransfer.getData('text/plain');
+            // Add the button div to newDiv element as a child
+            let button = createFunctionButton(newDiv);
+            newDiv.appendChild(button);
+          }
+
+          else {
+            newDiv.innerText = e.dataTransfer.getData('text/plain')
+          };
+          // change the event listeners from source to usedtarget
+          removeSourceBoxListeners(newDiv);
+          addUsedTargetBoxListeners(newDiv);
+          // Update the parent box's text with the dragged box's text
+          // curText = this.innerHTML // should be something like "function()"
+          // let newText = curText.slice(0,-1) + e.dataTransfer.getData('text/plain') + ")"
+          // this.innerHTML = newText 
+          this.appendChild(newDiv)
+          formatComposition(this)
         }
+
       }
 
       else if (dragSrcEl.classList.contains('usedtargetbox') ) {
@@ -148,7 +219,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
     
   return false;
-}
+  };
 
 function createDropdown(elem) {
   // Create a dropdown menu and return it
@@ -180,7 +251,7 @@ function createDropdown(elem) {
   
   button = document.createElement('button')
   button.type = "button"
-  button.classList.add('dropbtn','edit-btn')
+  button.classList.add('edit-btn')
   button.addEventListener('click', function(){
       toggleDropdown(this);
   });
@@ -190,6 +261,50 @@ function createDropdown(elem) {
   dropdownDiv.appendChild(select)
 
   return dropdownDiv
+  };
+
+function createFunctionDisabledButton(elem) {
+  button = document.createElement('button')
+  button.type = "button"
+  button.classList.add('disabled-btn')
+  button.addEventListener('click', function(){
+      addArgument(elem);
+  });
+  
+  button.textContent = elem.id
+  return button
+}
+
+function createFunctionButton(elem) {
+  button = document.createElement('button')
+  button.type = "button"
+  button.classList.add('newarg-btn')
+  button.addEventListener('click', function(){
+      addArgument(elem);
+  });
+  
+  button.textContent = elem.id
+  return button
+}
+
+function addArgument(elem) {
+  // Add a comma at the end of the current 
+  // arguments of the math function
+  // find last usedtargetbox child 
+  // and add a text node after it
+  const children = elem.querySelectorAll(':scope >.usedtargetbox');
+  if (children.length > 0) {
+
+    commaTextNode = document.createElement('div')
+    commaTextNode.innerText = ","
+    commaTextNode.classList.add('newtextnode')
+    elem.insertBefore(commaTextNode,elem.lastChild)
+  }
+}
+
+function getNumberChildNodes(parent) {
+  const children = parent.querySelectorAll(':scope >div');
+  return children.length
   };
 
 function toggleDropdown(elem) {
@@ -229,15 +344,8 @@ function updateNodeText(selectElem) {
     
   }
   // Update button text with new text
-  // 
   let button = selectElem.previousElementSibling
   button.textContent = newText;
-  // console.log(newText)
-  // selectElem.parentNode.parentNode.childNodes[0].textContent = newText
-  // [1].textContent = newText
-  // let newText = 
-    // let selectElem = elem.nextElementSibling;
-    // selectElem.classList.toggle('show')
   }
 
 function getBoxClass(elem) {
@@ -265,6 +373,36 @@ function getBoxClass(elem) {
 
   return box_class
   };
+
+function formatComposition(elem) {
+  // check if there is composition, i.e. we already 
+  // formatted the parentheses before
+  const firstChild = elem.firstChild
+  const lastChild = elem.lastChild
+  const prevSibling = lastChild.previousSibling
+  if (prevSibling.innerText == ")") {
+    // swap last two nodes
+    elem.insertBefore(lastChild, prevSibling);
+  }
+  else {
+    // This is the first composition
+    // Remove the "()" in the math function node text
+    curText = firstChild.innerText
+    firstChild.innerText = curText.replace('()','')
+    // Create a text node with open parentheses 
+    // and put it right after the button
+    openparenTextNode = document.createElement('div')
+    openparenTextNode.innerText = "("
+    openparenTextNode.classList.add('newtextnode')
+    elem.insertBefore(openparenTextNode,firstChild.nextElementSibling)
+    // Create a text node with closing parentheses
+    // and put it at the end
+    closeparenTextNode = document.createElement('div')
+    closeparenTextNode.innerText = ")"
+    closeparenTextNode.classList.add('newtextnode')
+    elem.appendChild(closeparenTextNode)
+  }
+}
 
 function addSourceBoxListeners(elem){
   elem.addEventListener('dragstart', handleDragStartSource);
@@ -323,24 +461,24 @@ function addDeleteBoxListeners(elem) {
   };
 
 // Initialize the listeners at runtime
-let srcitems = document.querySelectorAll('.sourcebox');
+var srcitems = document.querySelectorAll('.sourcebox');
 srcitems.forEach(function(item) {
   addSourceBoxListeners(item); 
 });
 
-let newitems = document.querySelectorAll('.newtargetbox');
+var newitems = document.querySelectorAll('.newtargetbox');
 newitems.forEach(function(item) {
   addNewBoxListeners(item);
 });
 
 
-let deleteitems = document.querySelectorAll('.deletetargetbox');
+var deleteitems = document.querySelectorAll('.deletetargetbox');
 deleteitems.forEach(function(item) {
   addDeleteBoxListeners(item);
 });
   
 
-  
+var singleArgMathFuncs = ["abs()","exp()"]; 
 
   
 

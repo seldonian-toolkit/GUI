@@ -68,7 +68,7 @@ $(function() {
 
 window.onclick = function(event) {
 	// Handle when user clicks away from a dropdown or any of its items
-  if (!event.target.matches(['.dropbtn', '.dropdown-option'])) {
+  if (!event.target.matches(['.edit-btn', '.dropdown-option'])) {
     var dropdowns = document.getElementsByClassName("dropdown-content");
     var i;
     for (i = 0; i < dropdowns.length; i++) {
