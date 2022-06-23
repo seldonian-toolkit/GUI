@@ -1,225 +1,225 @@
-document.addEventListener('DOMContentLoaded', (event) => {
-
-  function handleDragStartSource(e) {
-    // Only applies to source
-    e.stopPropagation() 
-    this.style.opacity = '0.4';
-    dragSrcEl = this;
-    e.dataTransfer.effectAllowed = 'copyMove';
-    // e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', this.innerHTML);
-  }
-
-  function handleDragStartTarget(e) {
-    // Only applies to target
-    e.stopPropagation()
-
-    this.style.opacity = '0.4';
-    dragSrcEl = this;
-    e.dataTransfer.effectAllowed = 'Move';
-    // e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', this.innerHTML);
-  }
-
-  function handleDragEnd(e) {
-    // Applies to both
-    this.style.opacity = '1';
-  }
-
-  function handleDragOver(e) {
-    // Applies to both
-    e.preventDefault();
-    return false;
-  }
-
-  function handleDragEnter(e) {
-    e.stopPropagation()
-    // figure out source and target box class
-    let source_box_class = getBoxClass(dragSrcEl)
-    let target_box_class = getBoxClass(this)
-    
-    // figure out source and target node types:
-    let source_node_type = dragSrcEl.getAttribute('data-nodetype')
-    let target_node_type = this.getAttribute('data-nodetype')
 
 
-    
-    if ( 
-        (
-          source_box_class == 'sourcebox' &&
-            (
-              target_box_class == 'newtargetbox' || 
-              target_node_type == 'math_function'
-            )
-        ) || 
-     
-        (
-          source_box_class == 'usedtargetbox' && 
+function handleDragStartSource(e) {
+  // Only applies to source
+  e.stopPropagation() 
+  this.style.opacity = '0.4';
+  dragSrcEl = this;
+  e.dataTransfer.effectAllowed = 'copyMove';
+  // e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', this.innerHTML);
+}
+
+function handleDragStartTarget(e) {
+  // Only applies to target
+  e.stopPropagation()
+
+  this.style.opacity = '0.4';
+  dragSrcEl = this;
+  e.dataTransfer.effectAllowed = 'Move';
+  // e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', this.innerHTML);
+}
+
+function handleDragEnd(e) {
+  // Applies to both
+  this.style.opacity = '1';
+}
+
+function handleDragOver(e) {
+  // Applies to both
+  e.preventDefault();
+  return false;
+}
+
+function handleDragEnter(e) {
+  e.stopPropagation()
+  // figure out source and target box class
+  let source_box_class = getBoxClass(dragSrcEl)
+  let target_box_class = getBoxClass(this)
+  
+  // figure out source and target node types:
+  let source_node_type = dragSrcEl.getAttribute('data-nodetype')
+  let target_node_type = this.getAttribute('data-nodetype')
+
+
+  
+  if ( 
+      (
+        source_box_class == 'sourcebox' &&
           (
-            target_box_class == 'usedtargetbox' || 
-            target_box_class == 'deletetargetbox'
+            target_box_class == 'newtargetbox' || 
+            target_node_type == 'math_function'
           )
+      ) || 
+   
+      (
+        source_box_class == 'usedtargetbox' && 
+        (
+          target_box_class == 'usedtargetbox' || 
+          target_box_class == 'deletetargetbox'
         )
       )
-    {
-      this.classList.add('over');
-    }
-  };
-
-  function handleDragLeave(e) {
-    // Applies only to target
-    this.classList.remove('over');
+    )
+  {
+    this.classList.add('over');
   }
+};
 
-  function handleDrop(e) {
-    // dragSrcEl is the dragged source and "this" is the target
-    e.stopPropagation(); // stops the browser from redirecting.
-    
-    let source_box_class = getBoxClass(dragSrcEl);
-    let target_box_class = getBoxClass(this);
+function handleDragLeave(e) {
+  // Applies only to target
+  this.classList.remove('over');
+}
 
-    let source_node_type = dragSrcEl.getAttribute('data-nodetype')
-    let target_node_type = this.getAttribute('data-nodetype')
-    // remove "over" class
-    this.classList.remove('over');
-    
-    if (dragSrcEl !== this) {  
+function handleDrop(e) {
+  // dragSrcEl is the dragged source and "this" is the target
+  e.stopPropagation(); // stops the browser from redirecting.
+  
+  let source_box_class = getBoxClass(dragSrcEl);
+  let target_box_class = getBoxClass(this);
 
-      if (source_box_class == 'sourcebox' ) {
+  let source_node_type = dragSrcEl.getAttribute('data-nodetype')
+  let target_node_type = this.getAttribute('data-nodetype')
+  // remove "over" class
+  this.classList.remove('over');
+  
+  if (dragSrcEl !== this) {  
+
+    if (source_box_class == 'sourcebox' ) {
+      
+      if (target_box_class == 'newtargetbox') {
+
+        var clone = this.cloneNode(true);
+
+        this.draggable = true;
+        this.classList.remove('newtargetbox')
+        this.classList.add('usedtargetbox')
         
-        if (target_box_class == 'newtargetbox') {
+        this.setAttribute('data-nodetype',source_node_type)
+        // Add button if the source was a math function
+        // Add dropdown if the source was a measure function
+        if (source_node_type == 'measure_function') {
+          // Update the target box's text with the dragged box's text
+          this.innerText = "";
 
-          var clone = this.cloneNode(true);
-
-          this.draggable = true;
-          this.classList.remove('newtargetbox')
-          this.classList.add('usedtargetbox')
-          
-          this.setAttribute('data-nodetype',source_node_type)
-          // Add button if the source was a math function
-          // Add dropdown if the source was a measure function
-          if (source_node_type == 'measure_function') {
-            // Update the target box's text with the dragged box's text
-            this.innerText = "";
-
-            // Update the target box's id to this text as well
-            this.id = e.dataTransfer.getData('text/plain');
-            // Add the dropdown div to this element as a child
-            let dropdown = createDropdown(this);
-            this.appendChild(dropdown);
-          }
-
-          else if (source_node_type == 'math_function' ) {
-            // Update the target box's text with the dragged box's text
-            this.innerText = "";
-
-            // Update the target box's id to this text as well
-            this.id = e.dataTransfer.getData('text/plain');
-            // Add the button div to this element as a child
-            if (singleArgMathFuncs.includes(dragSrcEl.id)) {
-              let button = createFunctionDisabledButton(this)
-            }
-            else {
-              let button = createFunctionButton(this);
-            }
-            this.appendChild(button);
-          }
-
-          else {
-            this.id = dragSrcEl.id
-            // Update the target box's text with the dragged box's text
-            this.innerText = e.dataTransfer.getData('text/plain');
-          };
-          // change the event listeners from source to usedtarget
-          removeSourceBoxListeners(this);
-          addUsedTargetBoxListeners(this);
-
-          // create another newtargetbox so user can still add new node 
-          // and add it to the DOM
-          removeSourceBoxListeners(clone)
-          removeUsedTargetBoxListeners(clone)
-          addNewBoxListeners(clone)
-          this.after(clone);
+          // Update the target box's id to this text as well
+          this.id = e.dataTransfer.getData('text/plain');
+          // Add the dropdown div to this element as a child
+          let dropdown = createDropdown(this);
+          this.appendChild(dropdown);
         }
 
-        // If target box is usedtargetbox,
-        // only allowed if target node type is a
-        // math function 
-        else if 
-          (
-            target_box_class == 'usedtargetbox' &&   
-            target_node_type == 'math_function'
-            )
-        {
-          
-          // Create a new div inside of the parent div
-          const newDiv = document.createElement('div');
-          newDiv.draggable = true;
-          newDiv.classList.add('usedtargetbox');
-          
-          // What was the source node type
-          source_node_type = dragSrcEl.getAttribute('data-nodetype')
-          newDiv.setAttribute('data-nodetype',source_node_type)
+        else if (source_node_type == 'math_function' ) {
+          // Update the target box's text with the dragged box's text
+          this.innerText = "";
 
-           // Only add dropdown if the source was a measure function
-          node_type = dragSrcEl.getAttribute('data-nodetype')
-
-          if (node_type == 'measure_function') {
-            // Update the target box's text with the dragged box's text
-            newDiv.innerText = "";
-
-            // Update the target box's id to newDiv text as well
-            newDiv.id = e.dataTransfer.getData('text/plain');
-            // Add the dropdown div to newDiv element as a child
-            let dropdown = createDropdown(newDiv);
-            newDiv.appendChild(dropdown);
+          // Update the target box's id to this text as well
+          this.id = e.dataTransfer.getData('text/plain');
+          // Add the button div to this element as a child
+          if (singleArgMathFuncs.includes(dragSrcEl.id)) {
+            let button = createFunctionDisabledButton(this)
           }
-
-          // Add button if the source was a math function
-          else if (node_type == 'math_function') {
-            // Update the target box's text with the dragged box's text
-            newDiv.innerText = "";
-
-            // Update the target box's id to newDiv text as well
-            newDiv.id = e.dataTransfer.getData('text/plain');
-            // Add the button div to newDiv element as a child
-            let button = createFunctionButton(newDiv);
-            newDiv.appendChild(button);
-          }
-
           else {
-            newDiv.innerText = e.dataTransfer.getData('text/plain')
-          };
-          // change the event listeners from source to usedtarget
-          removeSourceBoxListeners(newDiv);
-          addUsedTargetBoxListeners(newDiv);
-          // Update the parent box's text with the dragged box's text
-          // curText = this.innerHTML // should be something like "function()"
-          // let newText = curText.slice(0,-1) + e.dataTransfer.getData('text/plain') + ")"
-          // this.innerHTML = newText 
-          this.appendChild(newDiv)
-          formatComposition(this)
+            let button = createFunctionButton(this);
+          }
+          this.appendChild(button);
         }
+
+        else {
+          this.id = dragSrcEl.id
+          // Update the target box's text with the dragged box's text
+          this.innerText = e.dataTransfer.getData('text/plain');
+        };
+        // change the event listeners from source to usedtarget
+        removeSourceBoxListeners(this);
+        addUsedTargetBoxListeners(this);
+
+        // create another newtargetbox so user can still add new node 
+        // and add it to the DOM
+        removeSourceBoxListeners(clone)
+        removeUsedTargetBoxListeners(clone)
+        addNewBoxListeners(clone)
+        this.after(clone);
+      }
+
+      // If target box is usedtargetbox,
+      // only allowed if target node type is a
+      // math function 
+      else if 
+        (
+          target_box_class == 'usedtargetbox' &&   
+          target_node_type == 'math_function'
+          )
+      {
+        
+        // Create a new div inside of the parent div
+        const newDiv = document.createElement('div');
+        newDiv.draggable = true;
+        newDiv.classList.add('usedtargetbox');
+        
+        // What was the source node type
+        source_node_type = dragSrcEl.getAttribute('data-nodetype')
+        newDiv.setAttribute('data-nodetype',source_node_type)
+
+         // Only add dropdown if the source was a measure function
+        node_type = dragSrcEl.getAttribute('data-nodetype')
+
+        if (node_type == 'measure_function') {
+          // Update the target box's text with the dragged box's text
+          newDiv.innerText = "";
+
+          // Update the target box's id to newDiv text as well
+          newDiv.id = e.dataTransfer.getData('text/plain');
+          // Add the dropdown div to newDiv element as a child
+          let dropdown = createDropdown(newDiv);
+          newDiv.appendChild(dropdown);
+        }
+
+        // Add button if the source was a math function
+        else if (node_type == 'math_function') {
+          // Update the target box's text with the dragged box's text
+          newDiv.innerText = "";
+
+          // Update the target box's id to newDiv text as well
+          newDiv.id = e.dataTransfer.getData('text/plain');
+          // Add the button div to newDiv element as a child
+          let button = createFunctionButton(newDiv);
+          newDiv.appendChild(button);
+        }
+
+        else {
+          newDiv.innerText = e.dataTransfer.getData('text/plain')
+        };
+        // change the event listeners from source to usedtarget
+        removeSourceBoxListeners(newDiv);
+        addUsedTargetBoxListeners(newDiv);
+        // Update the parent box's text with the dragged box's text
+        // curText = this.innerHTML // should be something like "function()"
+        // let newText = curText.slice(0,-1) + e.dataTransfer.getData('text/plain') + ")"
+        // this.innerHTML = newText 
+        this.appendChild(newDiv)
+        formatComposition(this)
+      }
 
       }
 
-      else if (dragSrcEl.classList.contains('usedtargetbox') ) {
-        if (this.classList.contains('usedtargetbox')) {
-            // Update source box with target box's text and 
-            // the target box's text with the dragged box's text
-          dragSrcEl.innerHTML = this.innerHTML
-          this.innerHTML = e.dataTransfer.getData('text/plain');
-        };
-        if (this.classList.contains('deletetargetbox')) {
-            // remove the source box
-            dragSrcEl.remove()
-        };
+    else if (dragSrcEl.classList.contains('usedtargetbox') ) {
+      if (this.classList.contains('usedtargetbox')) {
+          // Update source box with target box's text and 
+          // the target box's text with the dragged box's text
+        dragSrcEl.innerHTML = this.innerHTML
+        this.innerHTML = e.dataTransfer.getData('text/plain');
       };
+      if (this.classList.contains('deletetargetbox')) {
+          // remove the source box
+          dragSrcEl.remove()
+      };
+    };
 
-    }
-    
-  return false;
   };
+  
+return false;
+};
 
 function createDropdown(elem) {
   // Create a dropdown menu and return it
@@ -482,5 +482,5 @@ var singleArgMathFuncs = ["abs()","exp()"];
 
   
 
-  }); // end of file
+
 

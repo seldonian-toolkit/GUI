@@ -47,23 +47,50 @@ function subregimeChange(subregime_field) {
 	measure_functions_field.style.display = "block"
 	other_measure_functions_field1.style.display = "none"
 	other_measure_functions_field2.style.display = "none"
-	}
+	};
+
+function addConstraintField() {
+	// Add another target_grid_container div
+
+	// First figure out how many target grid containers are already in the document
+	let target_grid_containers = document.querySelectorAll('.target_grid_container');
+	let last_target_grid_container = target_grid_containers[target_grid_containers.length -1]
+	let parentDiv = last_target_grid_container.parentNode
+	let n_containers = target_grid_containers.length
+	let new_container_id = "target_grid_container" + (n_containers+1)
+	newHeader = document.createElement('h5')
+	newHeader.classList.add('mt-4')
+	newHeader.textContent = "Constraint #" + (n_containers+1) + ":"
+
+	newDiv = document.createElement('div');
+  newDiv.classList.add('target_grid_container');
+  newDiv.id = new_container_id;
+
+  newTargetDiv = document.createElement('div');
+  newTargetDiv.classList.add('newtargetbox');
+  newTargetDiv.textContent = "Drag block here to add";
+  addNewBoxListeners(newTargetDiv);
+
+  newTextDiv = document.createElement('div');
+  newTextDiv.classList.add('newtextnode','ml-4');
+  newTextDiv.textContent = '$$ \\leq 0 $$';
+  MathJax.Hub.Queue(["Typeset", MathJax.Hub, newTextDiv]);
+  
+	newRemoveDiv = document.createElement('div');
+  newRemoveDiv.classList.add('deletetargetbox','ml-4');
+  newRemoveDiv.textContent = "Drag block here to remove"
 
 
-$(function() {
-		// Listens for change in any of the dropdowns there could be
-    $('.dropdown-content').change(function(e) {
-    		// need to know parent div so we can modify node text
-    		usedTargetNode = e.currentTarget.parentNode.parentNode
-    		usedTargetNode.innerHTML = "TEST" + usedTargetNode.innerHTML
-        var selected = $(e.target).val();
-        // console.log(selected)
-        // selected.forEach(function(item) {
-        // 	// console.log(item);
-        // })
+  newDiv.appendChild(newTargetDiv)
+  newDiv.appendChild(newTextDiv)
+  newDiv.appendChild(newRemoveDiv)
 
-    }); 
-});
+  // Get the form as the parent to add this newDiv to
+  // let form = document.forms[0]
+  parentDiv.insertBefore(newDiv, last_target_grid_container.nextSibling);
+  parentDiv.insertBefore(newHeader, newDiv);
+		
+	};
 
 
 window.onclick = function(event) {

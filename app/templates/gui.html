@@ -4,7 +4,6 @@
 	<div class="content-section">
 
 		<form method="post" onsubmit="submitFunction()" action="javascript:void(0);">
-		<!-- <form method="post" action=""> -->
 			{{ setup_form.csrf_token() }}
 
 			<div class="form-group" id="regime">
@@ -26,7 +25,7 @@
 			<h3 id='constraints' align="center">Build your constraints: </h3>
 			<!-- List of base node choices to pick from here -->
 
-			<div class="container" align="center" id="classification_funcs">
+			<div class="buildelements" align="center" id="classification_funcs">
 				{% set measure_functions = measure_functions_dict['supervised']['classification'] %}
 
 				<div class="variable_group"> 
@@ -62,27 +61,14 @@
 			</div>
 
 			
-			<h3 class='mt-4'> Drag blocks here:</h3>
-			<div class="target_grid_container" id="target_grid_container">
-				<div class="newtargetbox" id="onlynew">
-					Drag block here to add
-					<!-- <div class="dropdown">
-						<button type="button" onclick="editNode()" class="edit-btn">Dropdown</button>
-						<select multiple="true" id="myDropdown" class="dropdown-content">
-							<option class='dropdown-option' value="apple">Apple</option>
-							<option class='dropdown-option' value="banana">Banana</option>
-							<option class='dropdown-option' value="mango">Mango</option>
-							<option class='dropdown-option' value="grape">Grape</option>
-							<option class='dropdown-option' value="watermelon">watermelon</option>
-						</select>
-					</div> -->
-				
-				</div>
-				<div class="deletetargetbox" id="onlydelete">
-					Drag block here to remove
-				</div>
-			
+			<h5 class='mt-4'> Constraint #1:</h5>
+			<div class="target_grid_container" id="target_grid_container1">
+				<div class="newtargetbox">Drag block here to add</div>
+				<div class="newtextnode ml-4" id="">$$ \leq 0 $$</div>
+				<div class="deletetargetbox ml-4" id="onlydelete">Drag block here to remove</div>
 			</div>
+
+			<button class="mt-2 btn btn-info" type="button" onclick="addConstraintField()">Add another constraint </button>
 			
 			<div class="form-group" >
 				{{ setup_form.submit(class="btn btn-success mt-4") }}
@@ -92,43 +78,64 @@
 
 	</div>
 
+<script src="static/js/dragging.js"></script>
 <script src="static/js/gui.js"></script>
 
-<script src="static/js/dragging.js"></script>
- 
 <script type="text/javascript">
 
 function submitFunction() {
 
 	let csrf_token = "{{ csrf_token() }}";
-	let parentDiv = document.getElementById('target_grid_container')
-	let childnodes = parentDiv.childNodes;
-
-	let constraintStr = ""
-	childnodes.forEach(function(child) {
-		if ((child.tagName == 'DIV') && (child.classList.contains("usedtargetbox")) ) {
-			constraintStr += child.innerText
+	let constraintDivs = document.querySelectorAll('.target_grid_container')
+	let constraintStrArray = new Array
+	constraintDivs.forEach(function(parentDiv) {
+		let childnodes = parentDiv.childNodes;
+		let constraintStr = ""
+		childnodes.forEach(function(child) {
+			if ((child.tagName == 'DIV') && (child.classList.contains("usedtargetbox")) ) {
+				constraintStr += child.innerText
+			}
+		});
+		if (constraintStr == "") {
+			alert("Constraint was empty. Please make a constraint before submitting")
+			return
 		}
+		constraintStr = constraintStr.replace((/  |\r\n|\n|\r/gm),"");
+		constraintStrArray.push(constraintStr)
 	});
-	console.log(constraintStr)
+	
+	console.log(constraintStrArray)
 	$.ajax({
 			type: 'POST',
 			contentType: 'application/json',
 			url: '/process_constraints',
-			data: JSON.stringify({data:constraintStr}),
+			data: JSON.stringify({data:constraintStrArray}),
 			datatype:'json',
 			headers: {"X-CSRFToken":csrf_token},
-			success: function(data) {
+			success: function(results) {
+				if (results['success']) {
+					console.log("success")
+				}
+				
 				// window.location = data;
-				console.log("success")
+				// let flash_messages = "{{get_flashed_messages()}}"
+				// console.log(flash_messages)
+
 			},
-			error: function() {
-				alert("Oops! Something went wrong.");
+			error: function(results) {
+				console.log("There was an error:")
+				console.log(results)
+				// let flash_messages = "{{get_flashed_messages()}}"
+				// console.log(flash_messages)
+				// console.log("Error:",errorObj.responseText);
+				// console.log("Error type:",errorType);
+				// console.log("Exception:",exception);
 			}
 	});
+	return
 } 
 
 </script>
 
-
+<script src="static/js/flash.min.js"></script>
 {% endblock content %}
