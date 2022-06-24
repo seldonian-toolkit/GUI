@@ -37,16 +37,35 @@ def process_constraints():
 	print("Inside process_constraints()")
 	# Validate constraint
 
-	constraints = request.json['data']
+	constraints = request.json['constraintsData']
+	form_data = request.json['formData']
+	# constraints = request.json['constraintsData']
 	print("The constraint strings are: ")
 	print(constraints)
+
+	regime_dict = form_data[0]
+	regime = regime_dict['value']
+	if regime == 'supervised':
+		sub_regime_dict = form_data[1]
+		sub_regime = sub_regime_dict['value']
+		sensitive_attributes_dict = form_data[2]
+		sensitive_attributes = sensitive_attributes_dict['value']
+		print(regime,sub_regime,sensitive_attributes)
+	elif regime == 'RL':
+		sub_regime = "all"
+		sensitive_attributes = []
 	# columns = ["M","F"]
-	# pt = ParseTree(delta=0.05,regime='supervised',
-	# 	sub_regime='classification',columns=columns)
-	# try:
-	# 	pt.create_from_ast(constraint_str)
-	# except Exception as e:
-	# 	return jsonify(success=0,error_msg="Issue building the parse tree")
+	parse_trees = []
+	for constraint_str in constraints:
+		pt = ParseTree(delta=0.05,regime=regime,
+			sub_regime=sub_regime,columns=sensitive_attributes)
+		try:
+			pt.create_from_ast(constraint_str)
+		except Exception as e:
+			print(e)
+			return jsonify(success=0,
+				error_msg=("Issue building the parse tree for constraint: "
+						  f"{constraint_str}"))
 
 	return jsonify(success=1)
 

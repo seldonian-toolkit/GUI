@@ -1,14 +1,14 @@
 function regimeChange(regime_field) {
-	var regime = regime_field.value;
+	let regime = regime_field.value;
 	let subregime_field = document.getElementById("sub-regime-group");
+	let subregime = document.getElementById("sub_regime").value;
 	let sensitive_attrs_field = document.getElementById("sensitive_attrs-group");
 	
 	if (regime == "supervised") {
 		subregime_field.style.display = "block";
 		sensitive_attrs_field.style.display = "block";
-		var sub_regime = subregime_field.value;
 		
-		if (sub_regime == "classification") {
+		if (subregime == "classification") {
 			var measure_functions_field = document.getElementById("classification_funcs");
 			var other_measure_functions_field1 = document.getElementById("regression_funcs");
 		}
@@ -20,12 +20,13 @@ function regimeChange(regime_field) {
 
 	}
 
-	else {
+	else if (regime == "RL") {
 		var measure_functions_field = document.getElementById("RL_funcs");
 		var other_measure_functions_field1 = document.getElementById("classification_funcs");
 		var other_measure_functions_field2 = document.getElementById("regression_funcs");
 		subregime_field.style.display = "none";
 		sensitive_attrs_field.style.display = "none";
+
 	}
 	measure_functions_field.style.display = "block"
 	other_measure_functions_field1.style.display = "none"
@@ -34,7 +35,7 @@ function regimeChange(regime_field) {
 
 function subregimeChange(subregime_field) {
 	
-	var sub_regime = subregime_field.value;
+	let sub_regime = subregime_field.value;
 	if (sub_regime == "classification") {
 		var measure_functions_field = document.getElementById("classification_funcs");
 		var other_measure_functions_field1 = document.getElementById("regression_funcs");
@@ -43,7 +44,7 @@ function subregimeChange(subregime_field) {
 		var measure_functions_field = document.getElementById("regression_funcs");
 		var other_measure_functions_field1 = document.getElementById("classification_funcs")
 	}
-	var other_measure_functions_field2 = document.getElementById("RL_funcs");
+	let other_measure_functions_field2 = document.getElementById("RL_funcs");
 	
 	measure_functions_field.style.display = "block"
 	other_measure_functions_field1.style.display = "none"
@@ -123,10 +124,10 @@ function deleteConstraint(elem) {
 window.onclick = function(event) {
 	// Handle when user clicks away from a dropdown or any of its items
   if (!event.target.matches(['.edit-btn', '.dropdown-option'])) {
-    var dropdowns = document.getElementsByClassName("dropdown-content");
-    var i;
+    let dropdowns = document.getElementsByClassName("dropdown-content");
+    let i;
     for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
+      let openDropdown = dropdowns[i];
       if (openDropdown.classList.contains('show')) {
         openDropdown.classList.remove('show');
       }

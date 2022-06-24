@@ -2,27 +2,62 @@
 	{% block content %}
 	<h1 id='primary_header' align="center">Seldonian Interface GUI</h1>
 	<div class="content-section">
+		<div class='instructions_container mb-2'>
+			<h3 align="center"> Instructions </h3>
+			<hr>
+			<p class="instructions_paragraph">
+				Welcome to the Seldonian Interface GUI! To use this GUI, first complete the  select the machine learning regime of your problem. Then, if appropriate, select the sub-regime. Next, type any sensitive attributes (column names) from your dataset that you may want to use in the constraints.
+			</p>
+			<h5 align="left"> Building constraints </h5>
+			<p class="instructions_paragraph">
+				Drag the boxes from the "Constraint building blocks" area into the dotted block area where it says "Drop block here to add". The dropped block should become solid, and a new dotted block area will appear to its right where you can drop new blocks. Dragging a new block onto a solid block that is a math function (see "Block types and their uses") will result in a composition. Continue dropping blocks until you are satisfied with the constraint string. To create a new constraint, click the "Add another constraint" button. Remove a constraint by clicking the "Remove this constraint" button. The original constraint cannot be removed. Click the "Submit" button when all of your constraints are completed.
+			</p>
 
+			<h5 align="left"> Modifying constraints </h5>
+			<p class="instructions_paragraph">
+				If you want to remove a solid block from a constraint, drag it over to the dotted block area on the right where it says "Drop block here to remove." To rearrange the position of a solid block within a constraint, drag the solid block over another solid block in the same constraint. This will exchange the positions of the two solid blocks. This works on blocks within a composition as well (see "Block types and their uses").
+			</p>
+
+			
+
+			<h5 align="left"> Block types and their uses </h5>
+			<p class='instructions_paragraph'>
+				There are four block types: 
+				<ol> 
+				<li> <p class='instructions_paragraph'> <b>Measure functions</b> - these are fixed strings, such as "PR" (which stands for "positive rate") that are interpreted as statistical functions in the Seldonian engine. The available measure functions differ depending on the regime and sub-regime. When the supervised learning regime is selected, the measure functions will be clickable once dropped into the constraint area. Clicking them will bring up a dropdown menu, allowing you to select one or more sensitive attributes from the list of sensitive attributes you have entered (if any). As you select attributes, the text of the block will change accordingly. To select multiple attributes for the same measure function, hold the command key while clicking each attribute. For example, if you have a sensitive attribute called "Male" and you select it on a measure function called "PR", the block text will read "(PR | [Male])". The interpretation of this block is: calculate the positive rate from datapoints in the dataset where the column "Male" has a value of 1. </p> </li>
+				<li> <p class='instructions_paragraph'> <b> Mathematical operators </b> - addition (+), subtraction (-), multiplication (*) and division (/) operators are supported. They act as normal blocks and have no extra capabilities. </p>
+				</li>
+				<li> <p class='instructions_paragraph'> <b> Mathematical functions </b> - the four supported math functions: min, max, abs (absolute value), and exp (base e exponent) are "composable", i.e. they take other blocks as arguments. To perform a composition, first drag a math function block into the new block area to make it part of the constraint. Then, drag any type of block (including another math function block) from the "Constraint building blocks" area onto the math function block you just created. Continue dragging additional blocks onto the same solid math function block to add to the argument of the function. The min and max blocks must take at least two arguments, whereas abs and exp blocks take a single argument. To add an argument to a min or max block, click the block text. Any new blocks dragged into the block area will be added to the final argument currently available. All math function blocks are infinitely composable, e.g. "min(max(abs(exp(min(max(..." is supported. Take care when adding blocks to a nested math function block. The border of the block which  will be modified by a drop will become dotted when dragged over. </p>
+				</li>
+				</ol>
+			</p>
+		</div>
+		<hr>
 		<form method="post" onsubmit="submitFunction()" action="javascript:void(0);">
 			{{ setup_form.csrf_token() }}
 
-			<div class="form-group" id="regime-group">
-				{{ setup_form.regime.label }}
-				{{ setup_form.regime(class="form-control form-control-lg", onchange="regimeChange(this)") }}
-			</div>
+			<h3 align="center"> Metadata setup </h3>
 
-			<div class="form-group" id="sub-regime-group" style="display: block">
-				{{ setup_form.sub_regime.label }}
-				{{ setup_form.sub_regime(class="form-control form-control-lg",onchange="subregimeChange(this)") }}
-			</div>
+			<div class='container metadata_container'>
 
-			<div class="form-group" id="sensitive_attrs-group" style="display: block">
-				{{ setup_form.sensitive_attributes.label }}
-				{{ setup_form.sensitive_attributes(class="form-control form-control-lg") }}
+				<div class="form-group" id="regime-group">
+					{{ setup_form.regime.label }}
+					{{ setup_form.regime(class="form-control form-control-lg col-sm-5", onchange="regimeChange(this)") }}
+				</div>
+
+				<div class="form-group" id="sub-regime-group" style="display: block">
+					{{ setup_form.sub_regime.label }}
+					{{ setup_form.sub_regime(class="form-control form-control-lg col-sm-5",onchange="subregimeChange(this)") }}
+				</div>
+
+				<div class="form-group" id="sensitive_attrs-group" style="display: block">
+					{{ setup_form.sensitive_attributes.label }}
+					{{ setup_form.sensitive_attributes(class="form-control form-control-lg col-sm-5") }}
+				</div>
 			</div>
 
 			<hr class='mt-2 mb-2'>
-			<h3 id='constraints' align="center">Build your constraints: </h3>
+			<h3 id='constraints' align="center">Constraint building blocks: </h3>
 			<!-- List of base node choices to pick from here -->
 
 			<div class="buildelements" align="center" id="classification_funcs">
@@ -133,9 +168,9 @@
 			<div id="constraint1" class="constraint_container">
 				<h5 class='mt-2'> Constraint #1:</h5>
 				<div class="target_grid_container" id="target_grid_container1">
-					<div class="newtargetbox">Drag block here to add</div>
+					<div class="newtargetbox">Drop block here to add</div>
 					<div class="newtextnode ml-4" id="">$$ \leq 0 $$</div>
-					<div class="deletetargetbox ml-4" id="onlydelete">Drag block here to remove</div>
+					<div class="deletetargetbox ml-4" id="onlydelete">Drop block here to remove</div>
 				</div>
 			</div>
 
@@ -175,18 +210,24 @@ function submitFunction() {
 		constraintStr = constraintStr.replace((/  |\r\n|\n|\r/gm),"");
 		constraintStrArray.push(constraintStr)
 	});
-	
+	let formData = $("form :input[name!='csrf_token']").serializeArray()
+	console.log(formData)
 	console.log(constraintStrArray)
 	$.ajax({
 			type: 'POST',
 			contentType: 'application/json',
 			url: '/process_constraints',
-			data: JSON.stringify({data:constraintStrArray}),
+			data: JSON.stringify(
+				{constraintsData:constraintStrArray,
+				 formData:formData}),
 			datatype:'json',
 			headers: {"X-CSRFToken":csrf_token},
 			success: function(results) {
 				if (results['success']) {
 					console.log("success")
+				}
+				else {
+					alert(results['error_msg'])
 				}
 				
 				// window.location = data;

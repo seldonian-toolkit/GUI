@@ -300,13 +300,22 @@ function addArgument(elem) {
   // arguments of the math function
   // find last usedtargetbox child 
   // and add a text node after it
+  console.log("Adding argument to elem:")
+  console.log(elem)
   const children = elem.querySelectorAll(':scope >.usedtargetbox');
+  console.log(children)
   if (children.length > 0) {
-
-    commaTextNode = document.createElement('div')
-    commaTextNode.innerText = ","
-    commaTextNode.classList.add('newtextnode')
-    elem.insertBefore(commaTextNode,elem.lastChild)
+    // check to make sure that the last part of the argument
+    // isn't ",)"
+    // if that's the case then the last argument isn't filled out
+    console.log(elem.lastChild.previousSibling)
+    if (elem.lastChild.previousSibling.textContent != ',') {
+      commaTextNode = document.createElement('div')
+      commaTextNode.innerText = ","
+      commaTextNode.classList.add('newtextnode')
+      elem.insertBefore(commaTextNode,elem.lastChild)  
+    }
+    
   }
 }
 

@@ -1,3 +1,30 @@
+.content-section {
+  border:  3px solid;
+  padding: 10px;
+}
+
+.half-width {
+  width:  50%;
+}
+
+.instructions_container {
+  border: 3px solid #666;
+  background-color: #e6e6e6;
+  border-radius: 1.5em;
+  padding: 10px;
+}
+
+.metadata_container {
+  border: 3px solid #666;
+  background-color: #e6e6e6;
+  border-radius: 1.5em;
+  padding: 10px;
+}
+
+.instructions_paragraph {
+  font-size: 18px;
+}
+
 .constraint_container {
   /*display: flex;*/
   justify-content: center;
@@ -8,7 +35,7 @@
 .variable_group {
   border: 3px solid #666;
   background-color: #ddd;
-  border-radius: .5em;
+  border-radius: 1.5em;
   padding: 10px;
 }
 
@@ -21,8 +48,6 @@
   /*background-color: #ddd;*/
   z-index: 999;
 
-  /*grid-template-columns: repeat(5, 1fr);*/
-  /*gap: 10px;*/
 }
 
 .grid_container {
@@ -35,6 +60,8 @@
 
 .target_grid_container {
   display: inline-grid;
+  border: 3px solid #666;
+  border-radius: 1.5em;
   /*grid-template-columns: repeat(6, 1fr);*/
   grid-auto-flow: column;
   min-width: 100%;
