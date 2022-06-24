@@ -1,5 +1,3 @@
-
-
 function handleDragStartSource(e) {
   // Only applies to source
   e.stopPropagation() 
@@ -88,7 +86,6 @@ function handleDrop(e) {
     if (source_box_class == 'sourcebox' ) {
       
       if (target_box_class == 'newtargetbox') {
-
         var clone = this.cloneNode(true);
 
         this.draggable = true;
@@ -99,14 +96,24 @@ function handleDrop(e) {
         // Add button if the source was a math function
         // Add dropdown if the source was a measure function
         if (source_node_type == 'measure_function') {
-          // Update the target box's text with the dragged box's text
-          this.innerText = "";
-
-          // Update the target box's id to this text as well
-          this.id = e.dataTransfer.getData('text/plain');
+          
           // Add the dropdown div to this element as a child
-          let dropdown = createDropdown(this);
-          this.appendChild(dropdown);
+          regime = document.getElementById('regime').value
+          
+          if (regime == "supervised") {
+            // Update the target box's text with the dragged box's text
+            this.innerText = "";
+
+            // Update the target box's id to this text as well
+            this.id = e.dataTransfer.getData('text/plain');
+            let dropdown = createDropdown(this);
+            this.appendChild(dropdown);
+          }
+          else if (regime == "RL") {
+            this.id = dragSrcEl.id
+            // Update the target box's text with the dragged box's text
+            this.innerText = e.dataTransfer.getData('text/plain');
+          }
         }
 
         else if (source_node_type == 'math_function' ) {
@@ -162,8 +169,9 @@ function handleDrop(e) {
         newDiv.setAttribute('data-nodetype',source_node_type)
 
          // Only add dropdown if the source was a measure function
+         // and Regime != "RL"
         node_type = dragSrcEl.getAttribute('data-nodetype')
-
+      
         if (node_type == 'measure_function') {
           // Update the target box's text with the dragged box's text
           newDiv.innerText = "";
@@ -236,7 +244,7 @@ function createDropdown(elem) {
   
   // Figure out what the current sensitive attributes are
   // and make select options out of them
-  currAtrs = document.getElementById("sensitive_attrs").children[1].value
+  currAtrs = document.getElementById("sensitive_attrs-group").children[1].value
   if (currAtrs != '') {
     // split string into a list
     var atrArr = currAtrs.split(',');

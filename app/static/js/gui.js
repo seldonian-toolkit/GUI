@@ -1,12 +1,13 @@
 function regimeChange(regime_field) {
 	var regime = regime_field.value;
-	let subregime_field = document.getElementById("sub-regime");
-	let sensitive_attrs_field = document.getElementById("sensitive_attrs");
+	let subregime_field = document.getElementById("sub-regime-group");
+	let sensitive_attrs_field = document.getElementById("sensitive_attrs-group");
 	
 	if (regime == "supervised") {
 		subregime_field.style.display = "block";
 		sensitive_attrs_field.style.display = "block";
 		var sub_regime = subregime_field.value;
+		
 		if (sub_regime == "classification") {
 			var measure_functions_field = document.getElementById("classification_funcs");
 			var other_measure_functions_field1 = document.getElementById("regression_funcs");

@@ -6,17 +6,17 @@
 		<form method="post" onsubmit="submitFunction()" action="javascript:void(0);">
 			{{ setup_form.csrf_token() }}
 
-			<div class="form-group" id="regime">
+			<div class="form-group" id="regime-group">
 				{{ setup_form.regime.label }}
 				{{ setup_form.regime(class="form-control form-control-lg", onchange="regimeChange(this)") }}
 			</div>
 
-			<div class="form-group" id="sub-regime" style="display: block">
+			<div class="form-group" id="sub-regime-group" style="display: block">
 				{{ setup_form.sub_regime.label }}
 				{{ setup_form.sub_regime(class="form-control form-control-lg",onchange="subregimeChange(this)") }}
 			</div>
 
-			<div class="form-group" id="sensitive_attrs" style="display: block">
+			<div class="form-group" id="sensitive_attrs-group" style="display: block">
 				{{ setup_form.sensitive_attributes.label }}
 				{{ setup_form.sensitive_attributes(class="form-control form-control-lg") }}
 			</div>
@@ -27,6 +27,76 @@
 
 			<div class="buildelements" align="center" id="classification_funcs">
 				{% set measure_functions = measure_functions_dict['supervised']['classification'] %}
+
+				<div class="variable_group"> 
+					<h5>Measure functions:</h5>
+					<div class='grid_container'>
+						{% for ii in range(measure_functions|length) %}
+							{% set measure_function = measure_functions[ii] %}
+							<div id="{{measure_function}}" draggable="true" class="sourcebox" data-nodetype="measure_function">{{measure_function}}</div>
+						{% endfor %}
+					</div>
+
+					<h5 class='mt-2'>Mathematical operators:</h5>
+					<div class='grid_container'>
+						{% for ii in range(math_operators|length) %}
+							{% set math_operator = math_operators[ii] %}
+							<div id="{{math_operator}}" draggable="true" class="sourcebox" data-nodetype="math_operator">{{math_operator}}</div>
+						{% endfor %}
+					</div>
+
+					<h5 class='mt-2'>Mathematical functions:</h5>
+					<div class='grid_container'>
+					{% for ii in range(math_functions|length) %}
+						{% set math_function = math_functions[ii] %}
+						<div id="{{math_function}}"draggable="true" class="sourcebox" data-nodetype="math_function">{{math_function}}</div>
+					{% endfor %}
+					</div>
+
+					<h5 class='mt-2'>Constant (editable):</h5>
+					<div class='grid_container'>
+						<div id="constant" contentEditable="true" draggable="true" class="sourcebox" data-nodetype="constant">1.0</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="buildelements" align="center" id="regression_funcs" style="display: none">
+				{% set measure_functions = measure_functions_dict['supervised']['regression'] %}
+
+				<div class="variable_group"> 
+					<h5>Measure functions:</h5>
+					<div class='grid_container'>
+						{% for ii in range(measure_functions|length) %}
+							{% set measure_function = measure_functions[ii] %}
+							<div id="{{measure_function}}" draggable="true" class="sourcebox" data-nodetype="measure_function">{{measure_function}}</div>
+						{% endfor %}
+					</div>
+
+					<h5 class='mt-2'>Mathematical operators:</h5>
+					<div class='grid_container'>
+						{% for ii in range(math_operators|length) %}
+							{% set math_operator = math_operators[ii] %}
+							<div id="{{math_operator}}" draggable="true" class="sourcebox" data-nodetype="math_operator">{{math_operator}}</div>
+						{% endfor %}
+					</div>
+
+					<h5 class='mt-2'>Mathematical functions:</h5>
+					<div class='grid_container'>
+					{% for ii in range(math_functions|length) %}
+						{% set math_function = math_functions[ii] %}
+						<div id="{{math_function}}"draggable="true" class="sourcebox" data-nodetype="math_function">{{math_function}}</div>
+					{% endfor %}
+					</div>
+
+					<h5 class='mt-2'>Constant (editable):</h5>
+					<div class='grid_container'>
+						<div id="constant" contentEditable="true" draggable="true" class="sourcebox" data-nodetype="constant">1.0</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="buildelements" align="center" id="RL_funcs" style="display: none">
+				{% set measure_functions = measure_functions_dict['RL']['all'] %}
 
 				<div class="variable_group"> 
 					<h5>Measure functions:</h5>
