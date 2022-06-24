@@ -1,3 +1,10 @@
+.constraint_container {
+  /*display: flex;*/
+  justify-content: center;
+  position: relative;
+}
+
+
 .variable_group {
   border: 3px solid #666;
   background-color: #ddd;
@@ -90,7 +97,6 @@
 }
 
 
-
 .deletetargetbox {
   /*grid-column: col-end;*/
   /*justify-content:end;*/
@@ -124,6 +130,10 @@
 .newtextnode {
   margin:  auto;
   font-size: 20px;
+}
+
+.deleteconstraint-btn {
+  min-width: 100%;
 }
 
 .edit-btn {

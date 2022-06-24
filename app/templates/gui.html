@@ -21,7 +21,7 @@
 				{{ setup_form.sensitive_attributes(class="form-control form-control-lg") }}
 			</div>
 
-			<hr class='mt-4 mb-4'>
+			<hr class='mt-2 mb-2'>
 			<h3 id='constraints' align="center">Build your constraints: </h3>
 			<!-- List of base node choices to pick from here -->
 
@@ -37,7 +37,7 @@
 						{% endfor %}
 					</div>
 
-					<h5 class='mt-4'>Mathematical operators:</h5>
+					<h5 class='mt-2'>Mathematical operators:</h5>
 					<div class='grid_container'>
 						{% for ii in range(math_operators|length) %}
 							{% set math_operator = math_operators[ii] %}
@@ -45,7 +45,7 @@
 						{% endfor %}
 					</div>
 
-					<h5 class='mt-4'>Mathematical functions:</h5>
+					<h5 class='mt-2'>Mathematical functions:</h5>
 					<div class='grid_container'>
 					{% for ii in range(math_functions|length) %}
 						{% set math_function = math_functions[ii] %}
@@ -53,19 +53,20 @@
 					{% endfor %}
 					</div>
 
-					<h5 class='mt-4'>Constant (editable):</h5>
+					<h5 class='mt-2'>Constant (editable):</h5>
 					<div class='grid_container'>
 						<div id="constant" contentEditable="true" draggable="true" class="sourcebox" data-nodetype="constant">1.0</div>
 					</div>
 				</div>
 			</div>
 
-			
-			<h5 class='mt-4'> Constraint #1:</h5>
-			<div class="target_grid_container" id="target_grid_container1">
-				<div class="newtargetbox">Drag block here to add</div>
-				<div class="newtextnode ml-4" id="">$$ \leq 0 $$</div>
-				<div class="deletetargetbox ml-4" id="onlydelete">Drag block here to remove</div>
+			<div id="constraint1" class="constraint_container">
+				<h5 class='mt-2'> Constraint #1:</h5>
+				<div class="target_grid_container" id="target_grid_container1">
+					<div class="newtargetbox">Drag block here to add</div>
+					<div class="newtextnode ml-4" id="">$$ \leq 0 $$</div>
+					<div class="deletetargetbox ml-4" id="onlydelete">Drag block here to remove</div>
+				</div>
 			</div>
 
 			<button class="mt-2 btn btn-info" type="button" onclick="addConstraintField()">Add another constraint </button>
@@ -73,6 +74,7 @@
 			<div class="form-group" >
 				{{ setup_form.submit(class="btn btn-success mt-4") }}
 			</div>
+		
 		<hr>
 		</form>
 
@@ -137,5 +139,4 @@ function submitFunction() {
 
 </script>
 
-<script src="static/js/flash.min.js"></script>
 {% endblock content %}
