@@ -96,12 +96,28 @@ function addConstraintField() {
   newRemoveDiv.classList.add('deletetargetbox','ml-4');
   newRemoveDiv.textContent = "Drag block here to remove"
 
+  deltaDiv = document.createElement('div')
+  deltaDiv.classList.add('mt-2','delta_container',
+  	'form-control','form-control-lg','col-sm-5')
+	label = document.createElement('label')
+	label.classList.add('delta_label')
+	label.for = "delta_constraint1"
+	label.textContent = "Delta:"
+	input = document.createElement('input')
+	input.type = "text"
+	input.id="delta_constraint1"
+	
+	deltaDiv.appendChild(label)
+	deltaDiv.appendChild(input)
+
+
   targetDiv.appendChild(newTargetDiv)
   targetDiv.appendChild(newTextDiv)
   targetDiv.appendChild(newRemoveDiv)
 
   newConstraintDiv.appendChild(newHeader)
   newConstraintDiv.appendChild(targetDiv)
+  newConstraintDiv.appendChild(deltaDiv)
   newConstraintDiv.appendChild(deleteConstraintButton)
 
   parentNode.insertBefore(newConstraintDiv, last_constraint_container.nextSibling);

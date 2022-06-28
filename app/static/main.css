@@ -123,6 +123,18 @@
   border-radius: 5px;
 }
 
+.delta_label {
+  font-size: 18px;
+}
+
+.delta_container {
+  /*border: 3px solid #666;*/
+  width: 33%;
+  margin:0 auto;
+  background-color: #ddd;
+  border-radius: .5em;
+  padding: 10px;
+}
 
 .deletetargetbox {
   /*grid-column: col-end;*/
