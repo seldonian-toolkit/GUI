@@ -72,6 +72,7 @@ function handleDragLeave(e) {
 function handleDrop(e) {
   // dragSrcEl is the dragged source and "this" is the target
   e.stopPropagation(); // stops the browser from redirecting.
+  e.preventDefault();
   
   let source_box_class = getBoxClass(dragSrcEl);
   let target_box_class = getBoxClass(this);
