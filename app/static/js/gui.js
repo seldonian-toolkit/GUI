@@ -135,7 +135,286 @@ function deleteConstraint(elem) {
 			header.textContent = "Constraint #" + (i+1) + ":"
 		};
 
+	};
+
+function addPreconfiguredConstraint(radio) {
+	// Add blocks to the first unfilled constraint 
+	// (or add a new one) to make a constraint 
+	// based on the radio button that the user selected
+
+	// First make sure that sensitive attributes are set to M,F
+	
+	// First loop through constraints and figure out first that's empty
+	let constraint_containers = document.querySelectorAll('.constraint_container');
+	let constraint_index_to_use = -1;
+	for (let i=0, iLen=constraint_containers.length; i<iLen; i++) {
+			cc = constraint_containers[i]
+			// check if it has any usedtargetboxes  
+			used_target_boxes = cc.querySelectorAll('.usedtargetbox')
+			if (used_target_boxes.length == 0) {
+				constraint_index_to_use = i
+			}
+	};
+	// if none are empty then create a new constraint and use that
+	if (constraint_index_to_use < 0) {
+		addConstraintField()
+		let constraint_containers = document.querySelectorAll('.constraint_container');
+		var active_constraint_container = constraint_containers[constraint_containers.length-1]
 	}
+	else {
+		var active_constraint_container = constraint_containers[constraint_index_to_use]
+	};
+
+	// Within the constraint container pick out the target grid container
+	var target_grid_container = active_constraint_container.querySelector('.target_grid_container')
+	let constraintName = radio.id
+	if (constraintName == 'disparate_impact') {
+		// 0.8 - min((PR | [M])/(PR | [F]),(PR | [F])/(PR | [M]))
+		// constant
+    const constantBlock = createBlock('constant',0.8)
+    
+    // minus
+    const minusBlock = createBlock('math_operator','-')
+
+		// min()
+  	let minBlock = createBlock('math_function','min()')
+		
+		// PR | M
+  	const prMBlock = createBlock('measure_function','PR')
+    let select_M = prMBlock.querySelector('.dropdown-content')
+    let options_M = select_M.querySelectorAll('option');
+    options_M[0].selected = true
+    updateNodeText(select_M)
+    minBlock.appendChild(prMBlock);
+
+    // Division symbol
+    const divDiv = createBlock('math_operator','/')
+    minBlock.appendChild(divDiv);
+
+    // PR | F 
+		const prFBlock = createBlock('measure_function','PR')
+    let select_F = prFBlock.querySelector('.dropdown-content')
+    let options_F = select_F.querySelectorAll('option');
+    options_F[1].selected = true
+    updateNodeText(select_F)
+    minBlock.appendChild(prFBlock);
+
+    // Second argument
+    addArgument(minBlock)
+    // formatComposition(minBlock)
+
+    // PR | F 
+		const prFBlock2 = createBlock('measure_function','PR')
+    let select_F2 = prFBlock2.querySelector('.dropdown-content')
+    let options_F2 = select_F2.querySelectorAll('option');
+    options_F2[1].selected = true
+    updateNodeText(select_F2)
+    minBlock.appendChild(prFBlock2);
+
+    // Division symbol
+    const divBlock2 = createBlock('math_operator','/')
+    minBlock.appendChild(divBlock2);
+
+    // PR | M 
+		const prMBlock2 = createBlock('measure_function','PR')
+    let select_M2 = prMBlock2.querySelector('.dropdown-content')
+    let options_M2 = select_M2.querySelectorAll('option');
+    options_M2[0].selected = true
+    updateNodeText(select_M2)
+    minBlock.appendChild(prMBlock2);
+    formatComposition(minBlock)
+
+    // Add divs to target grid container
+		target_grid_container.prepend(minBlock);
+		target_grid_container.prepend(minusBlock);
+		target_grid_container.prepend(constantBlock);
+	}
+	else if (constraintName == 'demographic_parity') {
+		// abs((PR | [M]) - (PR | [F])) - 0.15
+
+		// abs
+		const absBlock = createBlock('math_function','abs()')
+
+		// PR | M
+		const prMBlock = createBlock('measure_function','PR')
+		let select_M = prMBlock.querySelector('.dropdown-content')
+    let options_M = select_M.querySelectorAll('option');
+    options_M[0].selected = true
+    updateNodeText(select_M)
+    absBlock.appendChild(prMBlock);
+
+    // minus
+    const minusBlock = createBlock('math_operator','-')
+    absBlock.appendChild(minusBlock)
+
+    // PR | F
+		const prFBlock = createBlock('measure_function','PR')
+		let select_F = prFBlock.querySelector('.dropdown-content')
+    let options_F = select_F.querySelectorAll('option');
+    options_F[1].selected = true
+    updateNodeText(select_F)
+    absBlock.appendChild(prFBlock);
+
+    formatComposition(absBlock)
+
+    // minus
+    const minusBlock2 = createBlock('math_operator','-')
+
+    // constant
+    const constantBlock = createBlock('constant',0.15)
+
+    target_grid_container.prepend(constantBlock);
+    target_grid_container.prepend(minusBlock2);
+    target_grid_container.prepend(absBlock);
+	}
+
+	else if (constraintName == 'equal_opportunity') {
+		// abs((FNR | [M]) - (FNR | [F])) - 0.2
+		const absBlock = createBlock('math_function','abs()')
+
+		// FNR | M
+		const fnrMBlock = createBlock('measure_function','FNR')
+		let select_M = fnrMBlock.querySelector('.dropdown-content')
+    let options_M = select_M.querySelectorAll('option');
+    options_M[0].selected = true
+    updateNodeText(select_M)
+    absBlock.appendChild(fnrMBlock);
+
+    // minus
+    const minusBlock = createBlock('math_operator','-')
+    absBlock.appendChild(minusBlock)
+
+    // FNR | F
+		const fnrFBlock = createBlock('measure_function','FNR')
+		let select_F = fnrFBlock.querySelector('.dropdown-content')
+    let options_F = select_F.querySelectorAll('option');
+    options_F[1].selected = true
+    updateNodeText(select_F)
+    absBlock.appendChild(fnrFBlock);
+
+    formatComposition(absBlock)
+
+    // minus
+    const minusBlock2 = createBlock('math_operator','-')
+
+    //constant
+    const constantBlock = createBlock('constant',0.2)
+
+    target_grid_container.prepend(constantBlock);
+    target_grid_container.prepend(minusBlock2);
+    target_grid_container.prepend(absBlock);
+	}
+
+	else if (constraintName == 'equalized_odds') {
+		// abs((FNR | [M]) - (FNR | [F])) + abs((FPR | [M]) - (FPR | [F])) - 0.35
+
+		// abs #1
+
+		const absBlock = createBlock('math_function','abs()')
+
+		// FNR | M
+		const fnrMBlock = createBlock('measure_function','FNR')
+		let select_M = fnrMBlock.querySelector('.dropdown-content')
+    let options_M = select_M.querySelectorAll('option');
+    options_M[0].selected = true
+    updateNodeText(select_M)
+    absBlock.appendChild(fnrMBlock);
+
+    // minus
+    const minusBlock = createBlock('math_operator','-')
+    absBlock.appendChild(minusBlock)
+
+    // FNR | F
+		const fnrFBlock = createBlock('measure_function','FNR')
+		let select_F = fnrFBlock.querySelector('.dropdown-content')
+    let options_F = select_F.querySelectorAll('option');
+    options_F[1].selected = true
+    updateNodeText(select_F)
+    absBlock.appendChild(fnrFBlock);
+
+    formatComposition(absBlock)
+
+    // plus
+    const plusBlock = createBlock('math_operator','+')
+
+    // abs #2
+
+		const absBlock2 = createBlock('math_function','abs()')
+
+		// PR | M
+		const fprMBlock = createBlock('measure_function','FNR')
+		let select_M2 = fprMBlock.querySelector('.dropdown-content')
+    let options_M2 = select_M2.querySelectorAll('option');
+    options_M2[0].selected = true
+    updateNodeText(select_M2)
+    absBlock2.appendChild(fprMBlock);
+
+    // minus
+    const minusBlock2 = createBlock('math_operator','-')
+    absBlock2.appendChild(minusBlock2)
+
+    // FNR | F
+		const fprFBlock = createBlock('measure_function','FNR')
+		let select_F2 = fprFBlock.querySelector('.dropdown-content')
+    let options_F2 = select_F2.querySelectorAll('option');
+    options_F2[1].selected = true
+    updateNodeText(select_F2)
+    absBlock2.appendChild(fprFBlock);
+    
+    formatComposition(absBlock2)
+
+    // minus
+    const minusBlock3 = createBlock('math_operator','-')
+
+    // constant
+
+    const constantBlock = createBlock('constant',0.35)
+
+    target_grid_container.prepend(constantBlock);
+    target_grid_container.prepend(minusBlock3);
+    target_grid_container.prepend(absBlock2);
+    target_grid_container.prepend(plusBlock);
+    target_grid_container.prepend(absBlock);
+	}
+
+	else if (constraintName == 'predictive_equality') {
+		// abs((FPR | [M]) - (FPR | [F])) - 0.2
+
+		const absBlock = createBlock('math_function','abs()')
+
+		// FPR | M
+		const fprMBlock = createBlock('measure_function','FPR')
+		let select_M = fprMBlock.querySelector('.dropdown-content')
+    let options_M = select_M.querySelectorAll('option');
+    options_M[0].selected = true
+    updateNodeText(select_M)
+    absBlock.appendChild(fprMBlock);
+
+    // minus
+    const minusBlock = createBlock('math_operator','-')
+    absBlock.appendChild(minusBlock)
+
+    // fpr | F
+		const fprFBlock = createBlock('measure_function','FPR')
+		let select_F = fprFBlock.querySelector('.dropdown-content')
+    let options_F = select_F.querySelectorAll('option');
+    options_F[1].selected = true
+    updateNodeText(select_F)
+    absBlock.appendChild(fprFBlock);
+
+    formatComposition(absBlock)
+
+    // minus
+    const minusBlock2 = createBlock('math_operator','-')
+
+    //constant
+    const constantBlock = createBlock('constant',0.2)
+
+    target_grid_container.prepend(constantBlock);
+    target_grid_container.prepend(minusBlock2);
+    target_grid_container.prepend(absBlock);
+	}
+}
 
 window.onclick = function(event) {
 	// Handle when user clicks away from a dropdown or any of its items

@@ -230,6 +230,41 @@ function handleDrop(e) {
 return false;
 };
 
+function createBlock(node_type,node_value) {
+  const blockDiv = document.createElement('div');
+  blockDiv.draggable = true;
+  blockDiv.classList.add('usedtargetbox');
+  blockDiv.setAttribute('data-nodetype',node_type)
+
+  if (node_type == 'constant') {
+    blockDiv.innerText = node_value
+  }
+
+  if (node_type == 'math_operator') {
+    blockDiv.innerText = node_value;
+  }
+  else if (node_type == 'measure_function') {
+    blockDiv.innerText = "";
+
+    // Update the target box's id to blockDiv text as well
+    blockDiv.id = node_value
+    
+    // Add a dropdown div to blockDiv element as a child
+    let dropdown = createDropdown(blockDiv);
+    blockDiv.appendChild(dropdown);
+  }
+  else if (node_type == 'math_function') {
+    blockDiv.innerText = "";
+    // Update the target box's id to blockDiv text as well
+    blockDiv.id = node_value;
+    // Add the button div to blockDiv element as a child
+    let button = createFunctionButton(blockDiv);
+    blockDiv.appendChild(button);
+  }
+  addUsedTargetBoxListeners(blockDiv)
+  return blockDiv
+}
+
 function createDropdown(elem) {
   // Create a dropdown menu and return it
   const dropdownDiv = document.createElement('div');

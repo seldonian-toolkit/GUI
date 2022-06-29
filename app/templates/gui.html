@@ -10,7 +10,14 @@
 			</p>
 			<h5 align="left"> Building constraints </h5>
 			<p class="instructions_paragraph">
-				Build your constraints by dragging boxes from the "Constraint building blocks" section into the constraint boxes in the "Constraints" section below it. Specifically, drag new blocks into the dotted block where it says "Drop block here to add". The dropped block should become solid, and a new dotted block area will appear to its right where you can drop new blocks. Dragging a new block onto a solid block that is a math function will result in a composition (see "Block types and their uses"). Continue dropping blocks until you are satisfied with the constraint string. To add a new constraint, click the blue "Add another constraint" button at the bottom of the "Constraints" section. Remove a constraint by clicking the red "Remove this constraint" button just below the constraint. Constraint #1 cannot be removed because at least one constraint is required. Click the "Submit" button when all of your constraints are completed.
+				Build your constraints by dragging boxes from the "Constraint building blocks" section into the constraint boxes in the "Constraints" section below it. Specifically, drag new blocks into the dotted block where it says "Drop block here to add". The dropped block should become solid, and a new dotted block area will appear to its right where you can drop new blocks. Dragging a new block onto a solid block that is a math function will result in a composition (see "Block types and their uses"). Continue dropping blocks until you are satisfied with the constraint string. 
+			</p>
+			<p class="instructions_paragraph">
+				To add a new constraint, click the blue "Add another constraint" button at the bottom of the "Constraints" section. Remove a constraint by clicking the red "Remove this constraint" button just below the constraint. Constraint #1 cannot be removed because at least one constraint is required. Click the "Submit" button when all of your constraints are completed.
+			</p>
+			<p class="instructions_paragraph">
+				For classification problems, there are five commonly used constraints that are preconfigured: disparate impact, demographic parity, equalized odds, equal opportunity, and predictive equality. Each of these constraints ensures fairness between two sensitive groups. As a result, you need to have at least two sensitive attributes listed in the metadata setup section. The constraint will use the first two sensitive attributes you have listed. If you do not have any listed, it will auto-fill the sensitive attributes form section for you and use those default attributes in the constraint. Clicking one of the buttons will cause that constraint to be auto-filled. It will use the first two sensitive attributes you have listed as the two sensitive attributes in each constraint.   into the last empty constraint in your list of constraints. If no constraints are empty, a new constraint will be added and auto-filled. These auto-filled constraints are editable once added to the page. This assumes you have 
+
 			</p>
 
 			<h5 align="left"> Modifying constraints </h5>
@@ -64,12 +71,25 @@
 
 			<hr class='mt-2 mb-2'>
 			<h3 id='constraints' align="center">Constraint building blocks: </h3>
+			
 			<!-- List of base node choices to pick from here -->
 
 			<div class="buildelements" align="center" id="classification_funcs">
+				<!-- Show the preconfigured GPA fairness constraints 
+				(use javascript to hide/show depending on regime/sub-regime -->
 				{% set measure_functions = measure_functions_dict['supervised']['classification'] %}
 
 				<div class="variable_group"> 
+					<h5>Preconfigured constraints: </h5>
+					<div class="grid_container mb-2" id="preconfigured_constraints">
+						<input class='btn btn-info' type="button" id="disparate_impact" value="disparate_impact" onclick="addPreconfiguredConstraint(this)">
+						<input class='btn btn-info' type="button" id="demographic_parity" value="demographic_parity" onclick="addPreconfiguredConstraint(this)">
+						<input class='btn btn-info' type="button" id="equalized_odds" value="equalized_odds" onclick="addPreconfiguredConstraint(this)">
+						<input class='btn btn-info' type="button" id="equal_opportunity" value="equal_opportunity" onclick="addPreconfiguredConstraint(this)">
+						<input class='btn btn-info' type="button" id="predictive_equality" value="predictive_equality" onclick="addPreconfiguredConstraint(this)">
+						
+						
+					</div>
 					<h5>Measure functions:</h5>
 					<div class='grid_container'>
 						{% for ii in range(measure_functions|length) %}
@@ -249,11 +269,6 @@ function submitFunction() {
 			error: function(results) {
 				console.log("There was an error:")
 				console.log(results)
-				// let flash_messages = "{{get_flashed_messages()}}"
-				// console.log(flash_messages)
-				// console.log("Error:",errorObj.responseText);
-				// console.log("Error type:",errorType);
-				// console.log("Exception:",exception);
 			}
 	});
 	return
