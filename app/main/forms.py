@@ -47,7 +47,7 @@ class SetupForm(FlaskForm):
 				 validators=[InputRequired()])
 
 	sensitive_attributes = StringField('Sensitive attributes (comma separated):', 
-				 validators=[])
+				 validators=[],id='sensitive_attributes')
 	# taglist = TagListField("Tag list here",render_kw={'disabled':''})
 	# taglist = TagListField("Tag list here")
 	# constraint_forms = FieldList(FormField(ConstraintForm),min_entries=1,max_entries=10)

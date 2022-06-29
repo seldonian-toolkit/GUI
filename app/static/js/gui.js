@@ -142,7 +142,14 @@ function addPreconfiguredConstraint(radio) {
 	// (or add a new one) to make a constraint 
 	// based on the radio button that the user selected
 
-	// First make sure that sensitive attributes are set to M,F
+	// First make sure that there are at least two sensitive attributes
+	let sensitive_attrs_field = document.getElementById('sensitive_attributes');
+	let sensitive_attrs_str = sensitive_attrs_field.value;
+	let sensitive_attrs_arr = sensitive_attrs_str.split(',');
+
+	if (sensitive_attrs_arr.length < 2) {
+		sensitive_attrs_field.value = "M,F"
+	}
 	
 	// First loop through constraints and figure out first that's empty
 	let constraint_containers = document.querySelectorAll('.constraint_container');
