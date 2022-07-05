@@ -6,27 +6,41 @@
 			<h3 align="center"> Instructions </h3>
 			<hr>
 			<p class="instructions_paragraph">
-				Welcome to the Seldonian Interface GUI. To use this GUI, first complete the "Metadata setup" section below. Select the machine learning regime of your problem. If appropriate, select the sub-regime and type any sensitive attributes (column names) from your dataset that you may want to use in the constraints.
+				Welcome to the Seldonian Interface GUI. To use this GUI, first complete the "Metadata setup" section below. Select the machine learning regime of your problem. If appropriate, select the sub-regime and type any sensitive attributes (column names) from your dataset that you may want to use in the constraints. Then build your constraints, enter the values for $\delta$, the confidence level, for each constraint and hit "Submit".
 			</p>
-			<h5 align="left"> Building constraints </h5>
+			<h4 align="left"> Building constraints </h4>
 			<p class="instructions_paragraph">
-				Build your constraints by dragging boxes from the "Constraint building blocks" section into the constraint boxes in the "Constraints" section below it. Specifically, drag new blocks into the dotted block where it says "Drop block here to add". The dropped block should become solid, and a new dotted block area will appear to its right where you can drop new blocks. Dragging a new block onto a solid block that is a math function will result in a composition (see "Block types and their uses"). Continue dropping blocks until you are satisfied with the constraint string. 
+				Build your constraints by dragging boxes from the "Constraint building blocks" section into the constraint areas in the "Behavioral Constraints" section at the bottom of the page. Specifically, drag new blocks into the dotted block where it says "Drop block here to add". Once you release the block, the dropped block should become solid, and a new dotted block area will appear to its right where you can drop new blocks. Dragging a new block onto a solid block that is a math function (e.g. "min()") will result in a composition (see <a href="#block_types">Block types and their uses</a>). Continue dropping blocks until you are satisfied with the constraint string. 
 			</p>
+			
 			<p class="instructions_paragraph">
-				To add a new constraint, click the blue "Add another constraint" button at the bottom of the "Constraints" section. Remove a constraint by clicking the red "Remove this constraint" button just below the constraint. Constraint #1 cannot be removed because at least one constraint is required. Click the "Submit" button when all of your constraints are completed.
+				For supervised classification problems, we have preconfigured five commonly used fairness constraints:
 			</p>
+				<ol>
+					<li class="instructions_listitem">Disparate impact</li>
+					<li class="instructions_listitem">Demographic parity</li>
+					<li class="instructions_listitem">Equalized odds</li>
+					<li class="instructions_listitem">Equal opportunity</li>
+					<li class="instructions_listitem">Predictive equality</li>
+				</ol>
 			<p class="instructions_paragraph">
-				For classification problems, there are five commonly used constraints that are preconfigured: disparate impact, demographic parity, equalized odds, equal opportunity, and predictive equality. Each of these constraints ensures fairness between two sensitive groups. As a result, you need to have at least two sensitive attributes listed in the metadata setup section. The constraint will use the first two sensitive attributes you have listed. If you do not have any listed, it will auto-fill the sensitive attributes form section for you and use those default attributes in the constraint. Clicking one of the buttons will cause that constraint to be auto-filled. It will use the first two sensitive attributes you have listed as the two sensitive attributes in each constraint.   into the last empty constraint in your list of constraints. If no constraints are empty, a new constraint will be added and auto-filled. These auto-filled constraints are editable once added to the page. This assumes you have 
+				These appear as buttons under the "Preconfigured constraints" sub-section. Clicking one of these buttons will auto-fill that constraint into the last empty constraint. If no constraints are empty, a new constraint will be added and auto-filled. These auto-filled constraints are editable once added to the page.
 
 			</p>
+			<p class="instructions_paragraph">
+				Each of these constraints represents a different definition of fairness between <b>two sensitive groups</b>. As a result, it requires that at least two attributes are listed in the "sensitive attributes" field of the metadata setup section. If you have fewer than two attributes listed, it will auto-fill the sensitive attributes "M,F" into that field and then use those in the auto-filled constraint string.
+			</p>
 
-			<h5 align="left"> Modifying constraints </h5>
+			<h4 align="left"> Adding, removing, and modifying constraints </h4>
+			<p class="instructions_paragraph">
+				To add additional constraints, click the blue "Add another constraint" button at the bottom of the "Behavioral Constraints" section. To remove a constraint, click the red "Remove this constraint" button below the constraint. Constraint #1 cannot be removed because at least one constraint is required. However, any constraint can be reset to its original, blank state by clicking the "Reset constraint" button. 
+			</p>
+
 			<p class="instructions_paragraph">
 				If you want to remove a solid block from a constraint, drag it over to the dotted block area on the right where it says "Drop block here to remove." To rearrange the position of a solid block within a constraint, drag the solid block over another solid block in the same constraint. This will exchange the positions of the two solid blocks. Both removing blocks and swapping blocks work on blocks within a composition as well (see "Block types and their uses").
 			</p>
 
-
-			<h5 align="left"> Block types and their uses </h5>
+			<h4 align="left" id="block_types"> Block types and their uses </h4>
 			<p class='instructions_paragraph'>
 				There are four block types: 
 				<ol> 
@@ -46,12 +60,27 @@
 			</p>
 		</div>
 		<hr>
+		<div class='instructions_container mb-2'>
+			<h3 align="center">Upload your data and metadata files:</h3>
+			<hr>
+			
+		    <form method="POST" action="" enctype="multipart/form-data">
+		    	{{ setup_form.csrf_token() }}
+				<h5>First, provide your data file in CSV format:</h5>
+				<p><input type="file" name="data-file-field" id="data-file-field"></p>
+				<h5 class='mt-2'>Next, provide your metadata file in JSON format:</h5>
+				<p><input type="file" name="metadata-file-field" id="metadata-file-field"></p>
+				<p class="instructions_paragraph">Note: Hitting submit will auto-fill the next section.</p>
+				<p><input type="submit" value="Submit" class="btn btn-success"></p>
+		    </form>
+		    <hr>
+		</div>
 		<form method="post" onsubmit="submitFunction()" action="javascript:void(0);">
 			{{ setup_form.csrf_token() }}
 
-			<h3 align="center"> Metadata setup </h3>
+			<h3 align="center"> Metadata overview </h3>
 
-			<div class='container metadata_container'>
+			<div class='metadata_container'>
 
 				<div class="form-group" id="regime-group">
 					{{ setup_form.regime.label }}
@@ -61,6 +90,11 @@
 				<div class="form-group" id="sub-regime-group" style="display: block">
 					{{ setup_form.sub_regime.label }}
 					{{ setup_form.sub_regime(class="form-control form-control-lg col-sm-5",onchange="subregimeChange(this)") }}
+				</div>
+
+				<div class="form-group" id="all_attrs-group"  style="display: block">
+					{{ setup_form.all_attributes.label }}
+					{{ setup_form.all_attributes(class="form-control form-control-lg col-sm-5") }}
 				</div>
 
 				<div class="form-group" id="sensitive_attrs-group" style="display: block">
@@ -80,7 +114,7 @@
 				{% set measure_functions = measure_functions_dict['supervised']['classification'] %}
 
 				<div class="variable_group"> 
-					<h5>Preconfigured constraints: </h5>
+					<h6>Preconfigured constraints: </h6>
 					<div class="grid_container mb-2" id="preconfigured_constraints">
 						<input class='btn btn-info' type="button" id="disparate_impact" value="disparate_impact" onclick="addPreconfiguredConstraint(this)">
 						<input class='btn btn-info' type="button" id="demographic_parity" value="demographic_parity" onclick="addPreconfiguredConstraint(this)">
@@ -88,9 +122,8 @@
 						<input class='btn btn-info' type="button" id="equal_opportunity" value="equal_opportunity" onclick="addPreconfiguredConstraint(this)">
 						<input class='btn btn-info' type="button" id="predictive_equality" value="predictive_equality" onclick="addPreconfiguredConstraint(this)">
 						
-						
 					</div>
-					<h5>Measure functions:</h5>
+					<h6>Measure functions:</h6>
 					<div class='grid_container'>
 						{% for ii in range(measure_functions|length) %}
 							{% set measure_function = measure_functions[ii] %}
@@ -98,7 +131,7 @@
 						{% endfor %}
 					</div>
 
-					<h5 class='mt-2'>Mathematical operators:</h5>
+					<h6 class='mt-2'>Mathematical operators:</h6>
 					<div class='grid_container'>
 						{% for ii in range(math_operators|length) %}
 							{% set math_operator = math_operators[ii] %}
@@ -106,7 +139,7 @@
 						{% endfor %}
 					</div>
 
-					<h5 class='mt-2'>Mathematical functions:</h5>
+					<h6 class='mt-2'>Mathematical functions:</h6>
 					<div class='grid_container'>
 					{% for ii in range(math_functions|length) %}
 						{% set math_function = math_functions[ii] %}
@@ -114,7 +147,7 @@
 					{% endfor %}
 					</div>
 
-					<h5 class='mt-2'>Constant (editable):</h5>
+					<h6 class='mt-2'>Constant (editable):</h6>
 					<div class='grid_container'>
 						<div id="constant" contentEditable="true" draggable="true" class="sourcebox" data-nodetype="constant">1.0</div>
 					</div>
@@ -190,7 +223,7 @@
 					</div>
 				</div>
 			</div>
-			<h3 class='mt-2'>Constraints:</h3>
+			<h3 class='mt-2'>Behavioral Constraints:</h3>
 			<hr>
 			<div id="constraint1" class="constraint_container">
 				<h5 class='mt-2'> Constraint #1:</h5>
@@ -200,9 +233,12 @@
 					<div class="deletetargetbox ml-4" id="onlydelete">Drop block here to remove</div>
 				</div>
 				<div class="mt-2 delta_container form-control form-control-sm">
-					<label class="delta_label" for="delta_constraint1">Delta:</label>
+					<label class="delta_label" for="delta_constraint1">$\delta =$</label>
 					<input type="text" id="delta_constraint1"></input>
 				</div>
+				
+				<button type="button" class="btn btn-warning resetconstraint-btn" onclick="resetConstraint(this)">Reset constraint</button>
+
 			</div>
 
 			<button class="mt-2 btn btn-info" type="button" onclick="addConstraintField()">Add another constraint </button>
@@ -211,7 +247,7 @@
 				{{ setup_form.submit(class="btn btn-success mt-4") }}
 			</div>
 		
-		<hr>
+			<hr>
 		</form>
 
 	</div>

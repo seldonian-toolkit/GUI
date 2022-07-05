@@ -45,7 +45,7 @@ class SetupForm(FlaskForm):
 	sub_regime = SelectField('Sub-regime:', 
 		choices=[('classification','classification'),('regression','regression')],
 				 validators=[InputRequired()])
-
+	all_attributes = SelectField('All attributes')
 	sensitive_attributes = StringField('Sensitive attributes (comma separated):', 
 				 validators=[],id='sensitive_attributes')
 	# taglist = TagListField("Tag list here",render_kw={'disabled':''})

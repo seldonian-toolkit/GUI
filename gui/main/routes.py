@@ -6,10 +6,12 @@ from .forms import SetupForm
 from .utils import allowed_file
 import numpy as np
 import os
+import json
 
+from seldonian.dataset import DataSetLoader
 from seldonian.parse_tree.operators import measure_functions_dict
 from seldonian.parse_tree.parse_tree import ParseTree
-# from seldonian.io_utils import load_json
+
 
 math_operators = ['+','-','*','/']
 math_functions = ['min()','max()','abs()','exp()']
@@ -17,20 +19,68 @@ math_functions = ['min()','max()','abs()','exp()']
 main = Blueprint('main',__name__)
 
 @main.route("/",methods=["GET"]) 
-def home(): 
-	return render_template('home.html')
-
-@main.route("/gui",methods=["GET","POST"]) 
+@main.route("/gui",methods=["GET"]) 
 def gui(): 
+	print(f"Hit /gui with {request.method} method")
 	setup_form = SetupForm()
 	setup_form.sensitive_attributes.data = "M,F"
-	if request.method == 'POST':
-		print(request.form)
 
 	return render_template('gui.html',setup_form=setup_form,
 		measure_functions_dict=measure_functions_dict,
 		math_operators=math_operators,
 		math_functions=math_functions)
+
+@main.route('/gui', methods=['POST'])
+def upload_file():
+	print(f"Hit /gui with {request.method} method")
+	data_file = request.files['data-file-field']
+	metadata_file = request.files['metadata-file-field']
+
+	### Metadata
+	if not metadata_file.filename.endswith('json'):
+		flash("Metadata file must end with '.json'","danger")
+		return redirect(url_for('main.gui'))	
+	try:
+		read = metadata_file.read()
+		metadata_dict = json.loads(read)
+	except:
+		flash("Metadata file is not properly JSON formatted","danger")
+		return redirect(url_for('main.gui'))	
+
+	regime = metadata_dict['regime']
+	setup_form = SetupForm()
+	setup_form.regime.data = regime
+	all_attrs = metadata_dict['columns']
+	if regime == 'supervised':
+		sub_regime = metadata_dict['sub_regime'] 
+		sensitive_attrs = metadata_dict['sensitive_columns']
+
+		setup_form.sub_regime.data = sub_regime
+		setup_form.sensitive_attributes.data = ','.join(
+		sensitive_attrs)
+
+	setup_form.all_attributes.choices = all_attrs
+	
+	### Data
+	loader = DataSetLoader(regime=regime)
+	
+	if regime == "supervised":
+		df = pd.read_csv(data_file,header=None)
+		label_column = metadata_dict['label_column']
+		df.columns = all_attrs
+		dataset = SupervisedDataSet(
+			df=df,
+			meta_information=all_attrs,
+			label_column=label_column,
+			sensitive_column_names=sensitive_attrs,
+			include_sensitive_columns=False,
+			include_intercept_term=True)
+
+	return render_template('gui.html',setup_form=setup_form,
+		measure_functions_dict=measure_functions_dict,
+		math_operators=math_operators,
+		math_functions=math_functions)
+
 
 @main.route("/process_constraints",methods=["GET","POST"]) 
 def process_constraints(): 
@@ -68,9 +118,4 @@ def process_constraints():
 						  f"{constraint_str}"))
 
 	return jsonify(success=1)
-
-@main.route("/test",methods=["GET","POST"]) 
-def test(): 
-	
-	return render_template('test.html')
 
