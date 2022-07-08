@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField, SubmitField, SelectField,
 					 FieldList, FormField,
-					 SelectMultipleField)
+					 SelectMultipleField, FileField)
 from wtforms import DateField as OGDateField
 
 from wtforms.fields import Field
@@ -34,10 +34,10 @@ datetimeformat='%Y-%m-%dT%H:%M' # To get form.field.data to work. Does not work 
 # 	# used_target_boxes = FieldList(FormField())
 # 	# constraint_str = StringField('Type your constraint:',validators=[InputRequired()])
 
-
 class SetupForm(FlaskForm):
 	""" The top level form """
-
+	data_file = FileField('Data file:')
+	
 	regime = SelectField('Regime:', 
 		choices=[('supervised','supervised'),('RL','RL')],
 				 validators=[InputRequired()])
@@ -45,9 +45,13 @@ class SetupForm(FlaskForm):
 	sub_regime = SelectField('Sub-regime:', 
 		choices=[('classification','classification'),('regression','regression')],
 				 validators=[InputRequired()])
-	all_attributes = SelectField('All attributes')
+	
+	all_attributes = StringField('All attributes (comma separated)')
+	
 	sensitive_attributes = StringField('Sensitive attributes (comma separated):', 
-				 validators=[],id='sensitive_attributes')
+				 validators=[])
+	
+	label_column = StringField('Label column')
 	# taglist = TagListField("Tag list here",render_kw={'disabled':''})
 	# taglist = TagListField("Tag list here")
 	# constraint_forms = FieldList(FormField(ConstraintForm),min_entries=1,max_entries=10)

@@ -6,11 +6,11 @@
 			<h3 align="center"> Instructions </h3>
 			<hr>
 			<p class="instructions_paragraph">
-				Welcome to the Seldonian Interface GUI. To use this GUI, first complete the "Metadata setup" section below. Select the machine learning regime of your problem. If appropriate, select the sub-regime and type any sensitive attributes (column names) from your dataset that you may want to use in the constraints. Then build your constraints, enter the values for $\delta$, the confidence level, for each constraint and hit "Submit".
+				Welcome to the Seldonian Interface GUI. To use this GUI, first complete the "Data and Metadata setup" section below. Upload your data file in CSV format, then fill out the rest of the fields in that section. Then build your constraints, enter the values for $\delta$, the confidence level, for each constraint and hit "Submit" when you are done. The GUI will save a specification file that you can use to run the Seldonian Engine or a Seldonian Experiment.  
 			</p>
 			<h4 align="left"> Building constraints </h4>
 			<p class="instructions_paragraph">
-				Build your constraints by dragging boxes from the "Constraint building blocks" section into the constraint areas in the "Behavioral Constraints" section at the bottom of the page. Specifically, drag new blocks into the dotted block where it says "Drop block here to add". Once you release the block, the dropped block should become solid, and a new dotted block area will appear to its right where you can drop new blocks. Dragging a new block onto a solid block that is a math function (e.g. "min()") will result in a composition (see <a href="#block_types">Block types and their uses</a>). Continue dropping blocks until you are satisfied with the constraint string. 
+				Build your constraints by dragging boxes from the "Constraint building blocks" section into the constraint areas in the "Behavioral Constraints" section at the bottom of the page. Specifically, drag new blocks into the dotted block where it says "Drop block here to add". When a new block is dragged over the correct drop area, the area will turn green, indicating that it is ready to accept the block. Once a block is released, it should become solid, and a new dotted block area will appear to its right where you can drop new blocks. Dragging a new block onto an existing solid block that is a math function (e.g. "min()") will result in a composition (see <a href="#block_types">Block types and their uses</a>). Continue dropping blocks until you are satisfied with the constraint string. 
 			</p>
 			
 			<p class="instructions_paragraph">
@@ -60,54 +60,50 @@
 			</p>
 		</div>
 		<hr>
-		<div class='instructions_container mb-2'>
-			<h3 align="center">Upload your data and metadata files:</h3>
-			<hr>
-			
-		    <form method="POST" action="" enctype="multipart/form-data">
-		    	{{ setup_form.csrf_token() }}
-				<h5>First, provide your data file in CSV format:</h5>
-				<p><input type="file" name="data-file-field" id="data-file-field"></p>
-				<h5 class='mt-2'>Next, provide your metadata file in JSON format:</h5>
-				<p><input type="file" name="metadata-file-field" id="metadata-file-field"></p>
-				<p class="instructions_paragraph">Note: Hitting submit will auto-fill the next section.</p>
-				<p><input type="submit" value="Submit" class="btn btn-success"></p>
-		    </form>
-		    <hr>
-		</div>
-		<form method="post" onsubmit="submitFunction()" action="javascript:void(0);">
+		
+		<form id="setup_form" method="post" onsubmit="submitFunction()" action="javascript:void(0);" enctype="multipart/form-data">
 			{{ setup_form.csrf_token() }}
 
-			<h3 align="center"> Metadata overview </h3>
-
 			<div class='metadata_container'>
+				<h3 align="center"> Data and metadata setup </h3>
+				<hr>
+				<div class="form-group" id="data-file-group">
+					{{ setup_form.data_file.label }}
+					{{ setup_form.data_file(class="form-control form-control-lg") }}
+				</div>
 
 				<div class="form-group" id="regime-group">
 					{{ setup_form.regime.label }}
-					{{ setup_form.regime(class="form-control form-control-lg col-sm-5", onchange="regimeChange(this)") }}
+					{{ setup_form.regime(class="form-control form-control-lg", onchange="regimeChange(this)") }}
 				</div>
 
 				<div class="form-group" id="sub-regime-group" style="display: block">
 					{{ setup_form.sub_regime.label }}
-					{{ setup_form.sub_regime(class="form-control form-control-lg col-sm-5",onchange="subregimeChange(this)") }}
+					{{ setup_form.sub_regime(class="form-control form-control-lg",onchange="subregimeChange(this)") }}
 				</div>
 
 				<div class="form-group" id="all_attrs-group"  style="display: block">
 					{{ setup_form.all_attributes.label }}
-					{{ setup_form.all_attributes(class="form-control form-control-lg col-sm-5") }}
+					{{ setup_form.all_attributes(class="form-control form-control-lg") }}
 				</div>
 
 				<div class="form-group" id="sensitive_attrs-group" style="display: block">
 					{{ setup_form.sensitive_attributes.label }}
-					{{ setup_form.sensitive_attributes(class="form-control form-control-lg col-sm-5") }}
+					{{ setup_form.sensitive_attributes(class="form-control form-control-lg") }}
+				</div>
+
+				<div class="form-group" id="label_column-group" style="display: block">
+					{{ setup_form.label_column.label }}
+					{{ setup_form.label_column(class="form-control form-control-lg") }}
 				</div>
 			</div>
 
 			<hr class='mt-2 mb-2'>
-			<h3 id='constraints' align="center">Constraint building blocks: </h3>
+			
 			
 			<!-- List of base node choices to pick from here -->
-
+			<h3 id='constraints' align="center">Constraint building blocks: </h3>
+			<hr>
 			<div class="buildelements" align="center" id="classification_funcs">
 				<!-- Show the preconfigured GPA fairness constraints 
 				(use javascript to hide/show depending on regime/sub-regime -->
@@ -259,34 +255,65 @@
 
 function submitFunction() {
 
+
 	let csrf_token = "{{ csrf_token() }}";
-	let constraintDivs = document.querySelectorAll('.target_grid_container')
+	// First check if data input empty
+	data_file_input = document.getElementById('data_file')
+	console.log(data_file_input)
+
+	let constraintDivs = document.querySelectorAll('.constraint_container')
 	let constraintStrArray = new Array
+	let DeltaArray = new Array
+	var constraintNum = 1;
+
 	constraintDivs.forEach(function(parentDiv) {
-		let childnodes = parentDiv.childNodes;
+		let target_grid_container = parentDiv.querySelector(".target_grid_container")
+		let childnodes = target_grid_container.childNodes;
+
+		// Constraint string
 		let constraintStr = ""
+		
 		childnodes.forEach(function(child) {
 			if ((child.tagName == 'DIV') && (child.classList.contains("usedtargetbox")) ) {
 				constraintStr += child.innerText
 			}
 		});
+
 		if (constraintStr == "") {
-			alert("Constraint was empty. Please make a constraint before submitting")
+			alert("Constraint#" + constraintNum + " is empty. Fill constraint before submitting")
 			return
 		}
 		constraintStr = constraintStr.replace((/  |\r\n|\n|\r/gm),"");
 		constraintStrArray.push(constraintStr)
+
+		// Now delta
+		let delta_container = parentDiv.querySelector(".delta_container")
+
+		let delta_input = delta_container.querySelector("input");
+		let deltaValue = delta_input.value;
+		if (deltaValue == "") {
+			alert("Delta for Constraint#" + constraintNum + " is empty. Please fill delta before submitting")
+			return
+		}
+		DeltaArray.push(deltaValue);
+		constraintNum+=1;
+	
 	});
-	let formData = $("form :input[name!='csrf_token']").serializeArray()
-	console.log(formData)
-	console.log(constraintStrArray)
+	// console.log($("form#data"))
+	var form = $('form');
+    // you can't pass Jquery form it has to be javascript form object
+    var formData = new FormData(form[0]);
+    // formData.append('test','somestring');
+    formData.append('constraint_strings',JSON.stringify(constraintStrArray))
+    formData.append('delta_values',JSON.stringify(DeltaArray))
+
 	$.ajax({
 			type: 'POST',
 			contentType: 'application/json',
 			url: '/process_constraints',
-			data: JSON.stringify(
-				{constraintsData:constraintStrArray,
-				 formData:formData}),
+			data: formData,
+			contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+		    processData: false, // NEEDED, DON'T OMIT THIS
 			datatype:'json',
 			headers: {"X-CSRFToken":csrf_token},
 			success: function(results) {
@@ -297,10 +324,6 @@ function submitFunction() {
 					alert(results['error_msg'])
 				}
 				
-				// window.location = data;
-				// let flash_messages = "{{get_flashed_messages()}}"
-				// console.log(flash_messages)
-
 			},
 			error: function(results) {
 				console.log("There was an error:")
