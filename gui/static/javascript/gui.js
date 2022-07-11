@@ -237,24 +237,25 @@ function addPreconfiguredConstraint(radio) {
     options_F[1].selected = true
     updateNodeText(select_F)
     minBlock.appendChild(prFBlock);
-
+    formatComposition(minBlock)
     // Second argument
     addArgument(minBlock)
-    // formatComposition(minBlock)
+  //   // formatComposition(minBlock)
 
-    // PR | F 
+  //   // PR | F 
 		const prFBlock2 = createBlock('measure_function','PR')
     let select_F2 = prFBlock2.querySelector('.dropdown-content')
     let options_F2 = select_F2.querySelectorAll('option');
     options_F2[1].selected = true
     updateNodeText(select_F2)
     minBlock.appendChild(prFBlock2);
-
-    // Division symbol
+    formatComposition(minBlock)
+  //   // Division symbol
     const divBlock2 = createBlock('math_operator','/')
     minBlock.appendChild(divBlock2);
+    formatComposition(minBlock)
 
-    // PR | M 
+  // //   // PR | M 
 		const prMBlock2 = createBlock('measure_function','PR')
     let select_M2 = prMBlock2.querySelector('.dropdown-content')
     let options_M2 = select_M2.querySelectorAll('option');
