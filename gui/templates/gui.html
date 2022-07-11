@@ -248,8 +248,8 @@
 
 	</div>
 
-<script src="static/js/dragging.js"></script>
-<script src="static/js/gui.js"></script>
+<script src="static/javascript/dragging.js"></script>
+<script src="static/javascript/gui.js"></script>
 
 <script type="text/javascript">
 
@@ -259,7 +259,6 @@ function submitFunction() {
 	let csrf_token = "{{ csrf_token() }}";
 	// First check if data input empty
 	data_file_input = document.getElementById('data_file')
-	console.log(data_file_input)
 
 	let constraintDivs = document.querySelectorAll('.constraint_container')
 	let constraintStrArray = new Array
@@ -299,7 +298,6 @@ function submitFunction() {
 		constraintNum+=1;
 	
 	});
-	// console.log($("form#data"))
 	var form = $('form');
     // you can't pass Jquery form it has to be javascript form object
     var formData = new FormData(form[0]);
