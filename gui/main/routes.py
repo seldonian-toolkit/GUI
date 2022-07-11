@@ -26,24 +26,24 @@ main = Blueprint('main',__name__)
 # 	form = DataUploadForm()
 # 	return render_template('index.html',form=form)
 
+@main.route("/",methods=["GET"]) 
 @main.route("/gui",methods=["GET"]) 
 def gui(): 
 	print(f"Hit /gui with {request.method} method")
 	
 	setup_form = SetupForm()
-	# setup_form.all_attributes.data = (
-	# 	"M,F,SAT_Physics,SAT_Biology,SAT_History,"
-	# 	"SAT_Second_Language, SAT_Geography,SAT_Literature,"
-	# 	"SAT_Portuguese_and_Essay,SAT_Math, SAT_Chemistry, GPA_class")
-	# setup_form.sensitive_attributes.data = "M,F"
-	# setup_form.label_column.data = "GPA_class"
+	setup_form.all_attributes.data = (
+		"M,F,SAT_Physics,SAT_Biology,SAT_History,"
+		"SAT_Second_Language, SAT_Geography,SAT_Literature,"
+		"SAT_Portuguese_and_Essay,SAT_Math, SAT_Chemistry, GPA_class")
+	setup_form.sensitive_attributes.data = "M,F"
+	setup_form.label_column.data = "GPA_class"
 
 	# if 'dataset' in request.args
 	return render_template('gui.html',setup_form=setup_form,
 		measure_functions_dict=measure_functions_dict,
 		math_operators=math_operators,
 		math_functions=math_functions)
-
 
 @main.route("/process_constraints",methods=["GET","POST"]) 
 def process_constraints(): 
@@ -111,6 +111,7 @@ def process_constraints():
 		savename = './spec.pkl'
 		save_pickle(savename,spec)
 		msg = f"Saved {savename}"
+		print(msg)
 
 	return jsonify(success=1,msg=msg)
 

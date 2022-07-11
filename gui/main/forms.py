@@ -46,9 +46,9 @@ class SetupForm(FlaskForm):
 		choices=[('classification','classification'),('regression','regression')],
 				 validators=[InputRequired()])
 	
-	all_attributes = StringField('All attributes (comma separated)')
+	all_attributes = StringField('All attributes (comma separated, no quotes)')
 	
-	sensitive_attributes = StringField('Sensitive attributes (comma separated):', 
+	sensitive_attributes = StringField('Sensitive attributes (comma separated, no quotes):', 
 				 validators=[])
 	
 	label_column = StringField('Label column')
