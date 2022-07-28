@@ -11,3 +11,8 @@ class Config(object):
 	UPLOAD_FOLDER = "app/static/uploads"
 	ALLOWED_EXTENSIONS = {'csv','txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
+
+class TestConfig(Config):
+	DEBUG = True
+	WTF_CSRF_ENABLED = False
+

@@ -11,7 +11,7 @@ import pandas as pd
 
 from seldonian.dataset import SupervisedDataSet
 from seldonian.spec import SupervisedSpec
-from seldonian.models import model as models
+from seldonian.models import models
 from seldonian.parse_tree.operators import measure_functions_dict
 from seldonian.parse_tree.parse_tree import ParseTree
 from seldonian.utils.io_utils import save_pickle
@@ -45,11 +45,16 @@ def gui():
 		math_operators=math_operators,
 		math_functions=math_functions)
 
+
 @main.route("/process_constraints",methods=["GET","POST"]) 
 def process_constraints(): 
 	print("Inside process_constraints()")
+
 	# Get data from request
+	# return request.files
+	# data_file = request.files['data_file']
 	data_file = request.files['data_file']
+
 	if not data_file:
 		# return jsonify(success=0,
 		# 		error_msg=("Data file was empty"))
@@ -61,8 +66,8 @@ def process_constraints():
 	
 	if regime == "supervised":
 		sub_regime = form_data['sub_regime']
-		sensitive_attributes = form_data['sensitive_attributes']
-		all_attributes = form_data['all_attributes']
+		sensitive_attributes = form_data['sensitive_attributes'].split(",")
+		all_attributes = form_data['all_attributes'].split(",")
 		label_column = form_data['label_column']
 
 		df = pd.read_csv(data_file,header=None)	

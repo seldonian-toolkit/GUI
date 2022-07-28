@@ -7,14 +7,14 @@ from flask_wtf.csrf import CSRFProtect
 
 def create_app(config_class=Config):
 	""" Create the flask app instance"""
-	if getattr(sys, 'frozen', False):
-		base_dir = os.path.join(sys._MEIPASS)
-		template_folder = os.path.join(base_dir, 'templates')
-		static_folder = os.path.join(base_dir, 'static')
-		app = Flask(__name__, template_folder=template_folder,
-			static_folder=static_folder)
-	else:
-		app = Flask(__name__)
+	# if getattr(sys, 'frozen', False):
+	# 	base_dir = os.path.join(sys._MEIPASS)
+	# 	template_folder = os.path.join(base_dir, 'templates')
+	# 	static_folder = os.path.join(base_dir, 'static')
+	# 	app = Flask(__name__, template_folder=template_folder,
+	# 		static_folder=static_folder)
+	# else:
+	app = Flask(__name__)
 	# app = Flask(__name__)
 	csrf = CSRFProtect()
 	csrf.init_app(app)

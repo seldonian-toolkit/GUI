@@ -2,64 +2,9 @@
 	{% block content %}
 	<h1 id='primary_header' align="center">Seldonian Interface GUI</h1>
 	<div class="content-section">
-		<div class='instructions_container mb-2'>
-			<h3 align="center"> Instructions </h3>
-			<hr>
-			<p class="instructions_paragraph">
-				Welcome to the Seldonian Interface GUI. To use this GUI, first complete the "Data and Metadata setup" section below. Upload your data file in CSV format, then fill out the rest of the fields in that section. Next, build your constraints, enter the values for $\delta$, the confidence level, for each constraint. Finally, hit "Submit" when you are done building your constraints and your data are uploaded. The GUI will save a specification file to your filesystem that you can use to run the Seldonian Engine or a Seldonian Experiment.  
-			</p>
-			<h4 align="left"> Building constraints </h4>
-			<p class="instructions_paragraph">
-				Build your constraints by dragging boxes from the "Constraint building blocks" section into the constraint areas in the "Behavioral Constraints" section at the bottom of the page. Specifically, drag new blocks into the dotted block where it says "Drop block here to add". When a new block is dragged over the correct drop area, the area will turn green, indicating that it is ready to accept the block. Once a block is released, it should become solid, and a new dotted block area will appear to its right where you can drop new blocks. Dragging a new block onto an existing solid block that is a math function (e.g. "min()") will result in a composition (see <a href="#block_types">Block types and their uses</a>). Continue dropping blocks until you are satisfied with the mathematical expression you have built. 
-			</p>
-			
-			<p class="instructions_paragraph">
-				For supervised classification problems, we have preconfigured five commonly used fairness constraints for your immediate use:
-			</p>
-				<ol>
-					<li class="instructions_listitem">Disparate impact</li>
-					<li class="instructions_listitem">Demographic parity</li>
-					<li class="instructions_listitem">Equalized odds</li>
-					<li class="instructions_listitem">Equal opportunity</li>
-					<li class="instructions_listitem">Predictive equality</li>
-				</ol>
-			<p class="instructions_paragraph">
-				These appear as buttons under the "Preconfigured constraints" sub-section. Clicking one of these buttons will auto-fill the mathematical expression for that constraint into the last empty constraint. If no constraints are empty, a new constraint will be created and auto-filled. These auto-filled constraints are editable once added to the page.
-
-			</p>
-			<p class="instructions_paragraph">
-				Each of these five preconfigured constraints represents a different definition of fairness between <b>two sensitive groups</b>. As a result, it requires that at least two attributes are listed in the "sensitive attributes" field of the metadata setup section. If you have fewer than two attributes listed, it will auto-fill the sensitive attributes "M,F" into that field and then use those in the auto-filled constraint string.
-			</p>
-
-			<h4 align="left"> Adding, removing, and modifying constraints </h4>
-			<p class="instructions_paragraph">
-				To add additional constraints, click the blue "Add another constraint" button at the bottom of the "Behavioral Constraints" section. To remove a constraint, click the red "Remove this constraint" button below the constraint. Constraint #1 cannot be removed because at least one constraint is required. However, any constraint can be reset to its original, blank state by clicking the "Reset constraint" button. 
-			</p>
-
-			<p class="instructions_paragraph">
-				If you want to remove a single solid block from a constraint, drag it over to the dotted block area on the right where it says "Drop block here to remove." To rearrange the position of a solid block within a constraint, drag the solid block over another solid block in the same constraint. This will exchange the positions of the two solid blocks. Both removing blocks and swapping blocks work on blocks within a composition as well (see "Block types and their uses"). Removing the parent block in a composition removes the parent and all of its children from the constraint.
-			</p>
-
-			<h4 align="left" id="block_types"> Block types and their uses </h4>
-			<p class='instructions_paragraph'>
-				There are four block types: 
-				<ol> 
-				<li> <p class='instructions_paragraph'> <b>Measure functions</b> - these are special strings, such as "PR" (which stands for "positive rate") that are interpreted as statistical functions in the Seldonian engine. A full list of measure functions and their meanings can be found <a href="https://seldonian-toolkit.github.io/Engine/build/html/_autosummary/seldonian.parse_tree.operators.html#seldonian.parse_tree.operators.measure_functions_dict">here</a>. The available measure functions differ depending on the regime and sub-regime. For example, positive rate is only defined for classification, not regression or reinforcement learning. </p>
-
-				<p class='instructions_paragraph'> When the supervised learning regime is selected, the measure functions will be clickable once dropped into the constraint area. Clicking them will bring up a dropdown menu, allowing you to select one or more sensitive attributes from the list of sensitive attributes you have entered in the metadata setup section (if any). As you select attributes, the text of the block will change accordingly. For example, if you have a sensitive attribute called "Male" and you select it on a measure function called "PR", the block text will read "(PR | [Male])". The "|" character acts as a filter; the interpretation of this block is: calculate the positive rate from datapoints in the dataset where the column "Male" has a value of 1.  Multiple sensitive attributes can be added to the same measure function and will act as multiple filters, joined by logical ANDs. To select multiple attributes for the same measure function, hold the command key while clicking each attribute in the dropdown menu. If no sensitive attributes are selected from the dropdown, then the statistical function will be calculated on the entire dataset.   </p> </li>
-				<li> <p class='instructions_paragraph'> <b> Mathematical operators </b> - addition (+), subtraction (-), multiplication (*) and division (/) operators are supported. They act as normal blocks and have no additional capabilities. </p>
-				</li>
-				<li> <p class='instructions_paragraph'> <b> Mathematical functions </b> - the four supported math functions: min, max, abs (absolute value), and exp (base-e exponent) are "composable", i.e. they take other blocks as arguments. To perform a composition, first drag a math function block into the constraint to make it solid. Then, drag any type of new block (including another math function block) from the "Constraint building blocks" area onto the math function block you just created. The outline of the existing block will turn from solid to dotted to indicate when the composition drop can be made. Note that other solid blocks dragged onto a solid math function block will swap the blocks and will not result in a composition. </p>
-
-				<p class='instructions_paragraph'>Continue dragging additional blocks onto the same solid math function block to add to the argument of the function. The min and max blocks must take two arguments, whereas abs and exp blocks take a single argument. To add a new argument to a min or max block, click on the blue "min" or "max" block text. After clicking, a comma will appear, and any new blocks dragged into the block area will be added to the final argument currently available. All math function blocks are infinitely composable. For example, "min(max(min(max(abs(..." is supported. Take care when adding blocks to the arguments of nested math function blocks. The border of the block which will be modified by the drop at your cursor location will become dotted when dragged over. </p>
-				</li>
-
-				<li> <p class='instructions_paragraph'> <b> Constant</b> - this block is editable so that you can add constant numerical values to your constraints. The block must be edited in the "Constraint building blocks" area before being dragged to a constraint. To add a different constant, simply edit the constant in the building box area and drag to a new box. Once dropped, constants act like normal blocks with no additional capabilities. They cannot be modified once dropped.
-				</li>	
-				</ol>
-			</p>
+		<div class='instructions_container mb-4'>
+			<p class='instructions_paragraph my-1'> Welcome to the Seldonian Interface GUI, a component of the <a href="https://seldonian.cs.umass.edu/">Seldonian Toolkit</a>. The GUI is intended to help you create the specification object that you will need to run Seldonian algorithms using the software in the Seldonian Toolkit. If you are new to the GUI, see the <a href="https://seldonian-toolkit.github.io/GUI">documentation</a> for instructions on how to get started. 
 		</div>
-		<hr>
 		
 		<form id="setup_form" method="post" onsubmit="submitFunction()" action="javascript:void(0);" enctype="multipart/form-data">
 			{{ setup_form.csrf_token() }}
@@ -254,7 +199,6 @@
 <script type="text/javascript">
 
 function submitFunction() {
-
 
 	let csrf_token = "{{ csrf_token() }}";
 	// First check if data input empty
