@@ -9,6 +9,5 @@ regression_plots/
 qsa*
 **/logs
 **/.coverage
-build
 dist
 *.pyc
