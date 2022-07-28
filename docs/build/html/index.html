@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>Seldonian Interface GUI documentation &#8212; Seldonian Interface GUI pre-release documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="seldonian-interface-gui-documentation">
+<h1>Seldonian Interface GUI documentation<a class="headerlink" href="#seldonian-interface-gui-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Welcome to the documentation for the Seldonian Interface GUI. This GUI is one example of a Seldonian interface, which is how a user interacts with a Seldonian algorithm. The source code for the GUI is hosted on <a class="reference external" href="https://github.com/seldonian-framework/GUI">GitHub</a>.</p>
+<section id="installation">
+<span id="id1"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>First, clone the GUI repo:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/seldonian-toolkit/GUI.git
+</pre></div>
+</div>
+<p>This will create a folder called “GUI” wherever you ran the above command. Enter that folder, and run the following from the command line (after entering your virtual environment, if relevant):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install -r requirements
+</pre></div>
+</div>
+</section>
+<section id="running-the-gui">
+<span id="running-gui"></span><h2>Running the GUI<a class="headerlink" href="#running-the-gui" title="Permalink to this headline">¶</a></h2>
+<p>The GUI runs as a webserver on your local machine. Run the GUI by entering the following from the command line. Again, make sure you have activated your virtual environment first, if relevant:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run.py
+</pre></div>
+</div>
+<p>This will start the webserver running at localhost:5001 on your local machine. Copy and paste that address (or alternatively 127.0.0.1:5001) into your browser and you should see a page displaying something like the following:</p>
+<figure class="align-center" id="id2">
+<a class="reference internal image-reference" href="_images/welcome_page.png"><img alt="welcome page" src="_images/welcome_page.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">GUI welcome screen</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="using-the-gui">
+<span id="using-gui"></span><h2>Using the GUI<a class="headerlink" href="#using-the-gui" title="Permalink to this headline">¶</a></h2>
+<section id="gui-overview">
+<h3>GUI overview<a class="headerlink" href="#gui-overview" title="Permalink to this headline">¶</a></h3>
+<p>To use the GUI, first complete the “Data and Metadata setup” section. Upload your data file in CSV format, then fill out the rest of the fields in that section. Next, build your constraints and enter the values for <span class="math notranslate nohighlight">\({\delta}\)</span>, the confidence level, for each constraint. Finally, hit “Submit” when you are done building your constraints. The GUI will save a specification (“spec.pkl”) file to your filesystem that you can use to run the Seldonian Engine or the Seldonian Experiments library.</p>
+</section>
+<section id="building-constraints">
+<h3>Building constraints<a class="headerlink" href="#building-constraints" title="Permalink to this headline">¶</a></h3>
+<p>Build your constraints by clicking and dragging boxes from the “Constraint building blocks” section into the constraint areas in the “Behavioral Constraints” section at the bottom of the page. Specifically, drag new blocks into the dotted block where it says “Drop block here to add”. When a new block is dragged over the correct drop area, the area will turn green, indicating that it is ready to accept the block. Once a block is released (let go of click), it should become solid, and a new dotted block area will appear to its right where you can drop new blocks. The following gif illustrates this:</p>
+<figure class="align-center" id="id3">
+<a class="reference internal image-reference" href="_images/drop_block.gif"><img alt="drop block" src="_images/drop_block.gif" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Creating a solid block from a new block</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Dropping a new block onto an existing solid block that is a math function (e.g. “min()”) will result in a composition (see <a class="reference internal" href="#block-types-and-their-uses">Block types and their uses</a>). Continue drag-and-dropping blocks until you are satisfied with the mathematical expression you have built.</p>
+<p>For supervised classification problems, we have preconfigured five commonly used fairness constraints for your immediate use:</p>
+<ul class="simple">
+<li><p>Disparate impact</p></li>
+<li><p>Demographic parity</p></li>
+<li><p>Equalized odds</p></li>
+<li><p>Equal opportunity</p></li>
+<li><p>Predictive equality</p></li>
+</ul>
+<p>These appear as buttons under the “Preconfigured constraints” sub-section shown in the previous gif. Clicking one of these buttons will auto-fill the mathematical expression for that constraint into the last empty constraint. If no constraints are empty, a new constraint will be created and auto-filled. These auto-filled constraints are editable once added to the page.</p>
+<p>Each of these five preconfigured constraints represents a different definition of fairness between <strong>two sensitive groups</strong>. As a result, clicking one of these buttons requires that at least two attributes are listed in the “sensitive attributes” field of the metadata setup section. If you have fewer than two attributes listed, it will auto-fill the sensitive attributes “M,F” into that field and then use those in the auto-filled constraint string.</p>
+</section>
+<section id="adding-removing-and-modifying-constraints">
+<h3>Adding, removing, and modifying constraints<a class="headerlink" href="#adding-removing-and-modifying-constraints" title="Permalink to this headline">¶</a></h3>
+<p>To add additional constraints, click the blue “Add another constraint” button at the bottom of the “Behavioral Constraints” section. To remove a constraint, click the red “Remove this constraint” button below the constraint. Constraint #1 cannot be removed because at least one constraint is required. However, any constraint can be reset to its original, blank state by clicking the “Reset constraint” button just below the constraint’s <span class="math notranslate nohighlight">\({\delta}\)</span> box.</p>
+<p>If you want to remove a single solid block from a constraint, click and drag it over to the dotted block area on the right where it says “Drop block here to remove.” That area will turn red once the removal is ready. Let go of the click and the block will disappear from the constraint.</p>
+<figure class="align-center" id="id4">
+<a class="reference internal image-reference" href="_images/remove_block.gif"><img alt="remove block" src="_images/remove_block.gif" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Removing a solid block from an existing constraint</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>To rearrange the position of a solid block within a constraint, click and drag the solid block over another solid block in the same constraint. When the border of the second block becomes dotted, the swap is ready to be performed. Letting go of the mouse at this point will exchange the positions of the two solid blocks.</p>
+<figure class="align-center" id="id5">
+<a class="reference internal image-reference" href="_images/swap_blocks.gif"><img alt="swap blocks" src="_images/swap_blocks.gif" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Swapping the position of two solid blocks</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Both removing blocks and swapping blocks work on blocks within a composition as well (see <a class="reference internal" href="#block-types-and-their-uses">Block types and their uses</a>). Removing the parent block in a composition removes the parent and all of its children from the constraint.</p>
+</section>
+<section id="block-types-and-their-uses">
+<h3>Block types and their uses<a class="headerlink" href="#block-types-and-their-uses" title="Permalink to this headline">¶</a></h3>
+<p>There are four block types:</p>
+<section id="measure-functions">
+<h4>1. Measure functions<a class="headerlink" href="#measure-functions" title="Permalink to this headline">¶</a></h4>
+<p>These are special strings, such as “PR” (which stands for “positive rate”) that are interpreted as statistical functions in the Seldonian engine. A full list of measure functions and their meanings can be found <a class="reference external" href="https://seldonian-toolkit.github.io/Engine/build/html/_autosummary/seldonian.parse_tree.operators.html#seldonian.parse_tree.operators.measure_functions_dict">here</a>. The available measure functions differ depending on the regime and sub-regime. For example, positive rate is only defined for classification, not regression or reinforcement learning.</p>
+<p>When the supervised learning regime is selected, the measure functions will be clickable once dropped into the constraint area. Clicking them will bring up a dropdown menu, allowing you to select one or more sensitive attributes from the list you entered in the metadata setup section (if any). Below is a demonstration:</p>
+<figure class="align-center" id="id6">
+<a class="reference internal image-reference" href="_images/measure_functions.gif"><img alt="measure functions" src="_images/measure_functions.gif" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Adding sensitive attributes to measure functions (supervised learning only)</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>As attributes are selected from the dropdown, the text of the block changes accordingly. In the gif, the sensitive attribute “female” is selected first from the dropdown (left click), and the block text then reads “(FPR| [female])”. The “|” character acts as a filter, where the interpretation of “(FPR| [female])” is: calculate the false positive rate from datapoints where the column “female” is True. A second sensitive attribute, “race_white”, is selected (command + left click), and the block text changes to: “(FPR| [female,race_white])”. When multiple sensitive attributes are selected, they filter together as logical ANDs. “(FPR| [female,race_white])” is interpreted as: calculate the false postive rate from datapoints where the columns “female” and “race_white” are both True. It is perfectly valid to not select any sensitive attributes from the dropdown. For example if the block just reads “FPR”, then the false positive rate will be calculated on all datapoints in the dataset.</p>
+</section>
+<section id="mathematical-operators">
+<h4>2. Mathematical operators<a class="headerlink" href="#mathematical-operators" title="Permalink to this headline">¶</a></h4>
+<p>The addition (+), subtraction (-), multiplication (*) and division (/) operators are supported. They act as normal blocks and have special additional capabilities.</p>
+</section>
+<section id="mathematical-functions">
+<h4>3. Mathematical functions<a class="headerlink" href="#mathematical-functions" title="Permalink to this headline">¶</a></h4>
+<p>The four supported math functions: min, max, abs (absolute value), and exp (base-e exponent) are “composable”, i.e. they take other blocks as arguments. To perform a composition, first drag a math function block into the constraint to make it solid. Then, drag any type of new block (including another math function block) from the “Constraint building blocks” area onto the math function block you just created. The outline of the existing block will turn from solid to dotted to indicate when the composition drop can be made.</p>
+<figure class="align-center" id="id7">
+<a class="reference internal image-reference" href="_images/simple_compose.gif"><img alt="simple compose" src="_images/simple_compose.gif" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Drag-and-dropping a new block into an existing solid math function block creates a “composition”</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Continue dragging additional blocks onto the same solid math function block to add to the argument of the function.</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/add_to_compose.gif"><img alt="add to compose" src="_images/add_to_compose.gif" style="width: 100%;" /></a>
+</figure>
+<p>The min and max blocks must take two arguments, whereas abs and exp blocks take a single argument. To add a new argument to a min or max block, click on the blue “min” or “max” block text. After clicking, a comma will appear, and any new blocks dragged into the block area will be added to the final argument currently available.</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/new_argument.gif"><img alt="new argument" src="_images/new_argument.gif" style="width: 100%;" /></a>
+</figure>
+<p>All math function blocks are infinitely composable. For example, “min(max(min(max(abs(…” is supported. Take care when adding blocks to the arguments of nested math function blocks. The border of the block which will be modified by the drop will become dotted when dragged over.</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/nested_compose.gif"><img alt="nested compose" src="_images/nested_compose.gif" style="width: 100%;" /></a>
+</figure>
+<p>Note that a composition can only be performed by dragging in a new block to a solid math block; dragging other solid blocks onto a solid math function block will swap the two blocks and will not result in a composition.</p>
+</section>
+<section id="constant">
+<h4>4. Constant<a class="headerlink" href="#constant" title="Permalink to this headline">¶</a></h4>
+<p>This block is editable so that you can add constant numerical values to your constraints. The block must be edited in the “Constraint building blocks” area before being dragged to a constraint. To add a different constant, simply edit the constant in the building box area and drag to a new box. Once dropped, constants act like normal blocks with no additional capabilities. They cannot be modified once dropped.</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/constant_block.gif"><img alt="constant block" src="_images/constant_block.gif" style="width: 100%;" /></a>
+</figure>
+</section>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">Seldonian Interface GUI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, University of Massachusetts, Amherst.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
