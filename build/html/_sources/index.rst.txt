@@ -1,6 +1,6 @@
 Seldonian Interface GUI documentation
 =============================================
-Welcome to the documentation for the Seldonian Interface GUI. This GUI is one example of a Seldonian interface, which is how a user interacts with a Seldonian algorithm. The source code for the GUI is hosted on `GitHub <https://github.com/seldonian-framework/GUI>`_.
+Welcome to the documentation for the Seldonian Interface GUI. This GUI is one example of a Seldonian interface, which is how a user provides data and constraints to a Seldonian algorithm. The source code for the GUI is hosted on `GitHub <https://github.com/seldonian-framework/GUI>`_.
 
 .. _installation:
 
