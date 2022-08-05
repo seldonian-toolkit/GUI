@@ -381,8 +381,8 @@ function addPreconfiguredConstraint(radio) {
 
 		const absBlock2 = createBlock('math_function','abs()')
 
-		// PR | M
-		const fprMBlock = createBlock('measure_function','FNR')
+		// FPR | M
+		const fprMBlock = createBlock('measure_function','FPR')
 		let select_M2 = fprMBlock.querySelector('.dropdown-content')
     let options_M2 = select_M2.querySelectorAll('option');
     options_M2[0].selected = true
@@ -393,8 +393,8 @@ function addPreconfiguredConstraint(radio) {
     const minusBlock2 = createBlock('math_operator','-')
     absBlock2.appendChild(minusBlock2)
 
-    // FNR | F
-		const fprFBlock = createBlock('measure_function','FNR')
+    // FPR | F
+		const fprFBlock = createBlock('measure_function','FPR')
 		let select_F2 = fprFBlock.querySelector('.dropdown-content')
     let options_F2 = select_F2.querySelectorAll('option');
     options_F2[1].selected = true
