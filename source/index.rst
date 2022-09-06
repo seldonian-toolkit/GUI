@@ -61,7 +61,7 @@ Build your constraints by clicking and dragging boxes from the "Constraint build
 
    Creating a solid block from a new block
 
-Dropping a new block onto an existing solid block that is a math function (e.g. "min()") will result in a composition (see `Block types and their uses`_). Continue drag-and-dropping blocks until you are satisfied with the mathematical expression you have built. 
+Dropping a new block onto an existing solid block that is a math function (e.g., "min()") will result in a composition (see `Block types and their uses`_). Continue drag-and-dropping blocks until you are satisfied with the mathematical expression you have built. 
 
 For supervised classification problems, we have preconfigured five commonly used fairness constraints for your immediate use:
 
@@ -108,7 +108,7 @@ There are four block types:
 1. Measure functions
 ####################
 
-These are special strings, such as "PR" (which stands for "positive rate") that are interpreted as statistical functions in the Seldonian engine. A full list of measure functions and their meanings can be found `here <https://seldonian-toolkit.github.io/Engine/build/html/_autosummary/seldonian.parse_tree.operators.html#seldonian.parse_tree.operators.measure_functions_dict>`_. The available measure functions differ depending on the regime and sub-regime. For example, positive rate is only defined for classification, not regression or reinforcement learning.
+These are special strings, such as "PR" (which stands for "positive rate") that are interpreted as statistical functions in the Seldonian engine. Hover over these boxes to see their plain English definition. A full list of measure functions and their meanings can be found `here <https://seldonian-toolkit.github.io/Engine/build/html/_autosummary/seldonian.parse_tree.operators.html#seldonian.parse_tree.operators.measure_functions_dict>`_. The available measure functions differ depending on the regime and sub-regime. For example, positive rate is only defined for classification, not regression or reinforcement learning.
 
 When the supervised learning regime is selected, the measure functions will be clickable once dropped into the constraint area. Clicking them will bring up a dropdown menu, allowing you to select one or more sensitive attributes from the list you entered in the metadata setup section (if any). Below is a demonstration:
 
@@ -128,7 +128,7 @@ The addition (+), subtraction (-), multiplication (*) and division (/) operators
 
 3. Mathematical functions 
 #########################
-The four supported math functions: min, max, abs (absolute value), and exp (base-e exponent) are "composable", i.e. they take other blocks as arguments. To perform a composition, first drag a math function block into the constraint to make it solid. Then, drag any type of new block (including another math function block) from the "Constraint building blocks" area onto the math function block you just created. The outline of the existing block will turn from solid to dotted to indicate when the composition drop can be made. 
+The four supported math functions: min, max, abs (absolute value), and exp (base-e exponent) are "composable", i.e., they take other blocks as arguments. To perform a composition, first drag a math function block into the constraint to make it solid. Then, drag any type of new block (including another math function block) from the "Constraint building blocks" area onto the math function block you just created. The outline of the existing block will turn from solid to dotted to indicate when the composition drop can be made. 
 
 .. figure:: _static/simple_compose.gif
    :width: 100 %
