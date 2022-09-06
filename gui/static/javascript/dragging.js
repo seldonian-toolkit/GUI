@@ -101,7 +101,7 @@ function handleDrop(e) {
           // Add the dropdown div to this element as a child
           regime = document.getElementById('regime').value
           
-          if (regime == "supervised") {
+          if (regime == "supervised_learning") {
             // Update the target box's text with the dragged box's text
             this.innerText = "";
 
@@ -110,7 +110,7 @@ function handleDrop(e) {
             let dropdown = createDropdown(this);
             this.appendChild(dropdown);
           }
-          else if (regime == "RL") {
+          else if (regime == "reinforcement_learning") {
             this.id = dragSrcEl.id
             // Update the target box's text with the dragged box's text
             this.innerText = e.dataTransfer.getData('text/plain');

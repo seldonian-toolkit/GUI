@@ -1,12 +1,22 @@
 function regimeChange(regime_field) {
 	let regime = regime_field.value;
-	let subregime_field = document.getElementById("sub-regime-group");
+	let subregime_field = document.getElementById("sub_regime-group");
 	let subregime = document.getElementById("sub_regime").value;
+	let env_module_field = document.getElementById("env_module-group");
+	let env_class_field = document.getElementById("env_class-group");
+	let agent_module_field = document.getElementById("agent_module-group");
+	let agent_class_field = document.getElementById("agent_class-group");
 	let sensitive_attrs_field = document.getElementById("sensitive_attrs-group");
+	let label_column_field = document.getElementById("label_column-group");
 	
-	if (regime == "supervised") {
+	if (regime == "supervised_learning") {
 		subregime_field.style.display = "block";
 		sensitive_attrs_field.style.display = "block";
+		label_column_field.style.display = "block";
+		env_module_field.style.display = "none"
+		env_class_field.style.display = "none"
+		agent_module_field.style.display = "none"
+		agent_class_field.style.display = "none"
 		
 		if (subregime == "classification") {
 			var measure_functions_field = document.getElementById("classification_funcs");
@@ -20,12 +30,17 @@ function regimeChange(regime_field) {
 
 	}
 
-	else if (regime == "RL") {
+	else if (regime == "reinforcement_learning") {
 		var measure_functions_field = document.getElementById("RL_funcs");
 		var other_measure_functions_field1 = document.getElementById("classification_funcs");
 		var other_measure_functions_field2 = document.getElementById("regression_funcs");
 		subregime_field.style.display = "none";
 		sensitive_attrs_field.style.display = "none";
+		label_column_field.style.display = "none";
+		env_module_field.style.display = "block"
+		env_class_field.style.display = "block"
+		agent_module_field.style.display = "block"
+		agent_class_field.style.display = "block"
 
 	}
 	measure_functions_field.style.display = "block"

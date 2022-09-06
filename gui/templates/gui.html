@@ -12,19 +12,37 @@
 			<div class='metadata_container'>
 				<h3 align="center"> Data and metadata setup </h3>
 				<hr>
-				<div class="form-group" id="data-file-group">
+				<div class="form-group" id="data_file-group">
 					{{ setup_form.data_file.label }}
 					{{ setup_form.data_file(class="form-control form-control-lg") }}
 				</div>
 
-				<div class="form-group" id="regime-group">
+				<div class="form-group" id="regime_group">
 					{{ setup_form.regime.label }}
 					{{ setup_form.regime(class="form-control form-control-lg", onchange="regimeChange(this)") }}
 				</div>
 
-				<div class="form-group" id="sub-regime-group" style="display: block">
+				<div class="form-group" id="sub_regime-group" style="display: block">
 					{{ setup_form.sub_regime.label }}
 					{{ setup_form.sub_regime(class="form-control form-control-lg",onchange="subregimeChange(this)") }}
+				</div>
+
+				<div class="form-group" id="env_module-group" style="display: none">
+					{{ setup_form.env_module.label }}
+					{{ setup_form.env_module(class="form-control form-control-lg") }}
+				</div>
+				<div class="form-group" id="env_class-group" style="display: none">
+					{{ setup_form.env_class.label }}
+					{{ setup_form.env_class(class="form-control form-control-lg") }}
+				</div>
+
+				<div class="form-group" id="agent_module-group" style="display: none">
+					{{ setup_form.agent_module.label }}
+					{{ setup_form.agent_module(class="form-control form-control-lg") }}
+				</div>
+				<div class="form-group" id="agent_class-group" style="display: none">
+					{{ setup_form.agent_class.label }}
+					{{ setup_form.agent_class(class="form-control form-control-lg") }}
 				</div>
 
 				<div class="form-group" id="all_attrs-group"  style="display: block">
@@ -68,7 +86,8 @@
 					<div class='grid_container'>
 						{% for ii in range(measure_functions|length) %}
 							{% set measure_function = measure_functions[ii] %}
-							<div id="{{measure_function}}" draggable="true" class="sourcebox" data-nodetype="measure_function">{{measure_function}}</div>
+							{% set measure_function_eng_def = measure_functions_eng_defs[measure_function] %}
+							<div title="{{measure_function_eng_def}}" id="{{measure_function}}" draggable="true" class="sourcebox" data-nodetype="measure_function">{{measure_function}}</div>
 						{% endfor %}
 					</div>
 
@@ -84,7 +103,7 @@
 					<div class='grid_container'>
 					{% for ii in range(math_functions|length) %}
 						{% set math_function = math_functions[ii] %}
-						<div id="{{math_function}}"draggable="true" class="sourcebox" data-nodetype="math_function">{{math_function}}</div>
+						<div id="{{math_function}}" draggable="true" class="sourcebox" data-nodetype="math_function">{{math_function}}</div>
 					{% endfor %}
 					</div>
 
@@ -103,7 +122,8 @@
 					<div class='grid_container'>
 						{% for ii in range(measure_functions|length) %}
 							{% set measure_function = measure_functions[ii] %}
-							<div id="{{measure_function}}" draggable="true" class="sourcebox" data-nodetype="measure_function">{{measure_function}}</div>
+							{% set measure_function_eng_def = measure_functions_eng_defs[measure_function] %}
+							<div title="{{measure_function_eng_def}}" id="{{measure_function}}" draggable="true" class="sourcebox" data-nodetype="measure_function">{{measure_function}}</div>
 						{% endfor %}
 					</div>
 
@@ -138,7 +158,8 @@
 					<div class='grid_container'>
 						{% for ii in range(measure_functions|length) %}
 							{% set measure_function = measure_functions[ii] %}
-							<div id="{{measure_function}}" draggable="true" class="sourcebox" data-nodetype="measure_function">{{measure_function}}</div>
+							{% set measure_function_eng_def = measure_functions_eng_defs[measure_function] %}
+							<div title="{{measure_function_eng_def}}" id="{{measure_function}}" draggable="true" class="sourcebox" data-nodetype="measure_function">{{measure_function}}</div>
 						{% endfor %}
 					</div>
 
