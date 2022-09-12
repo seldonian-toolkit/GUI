@@ -487,5 +487,5 @@ window.onclick = function(event) {
 
 $('[contenteditable="true"]').keypress(function(e) {
     var x = event.charCode || event.keyCode;
-    if (isNaN(String.fromCharCode(e.which)) && x!=46 || x===32 || x===13 || (x===46 && event.currentTarget.innerText.includes('.'))) e.preventDefault();
+    if (isNaN(String.fromCharCode(e.which)) && x!=46 || x===32 || x===13 || (x===46 && event.currentTarget.innerText.includes('.') || event.currentTarget.innerText.includes('-')) e.preventDefault();
 });
