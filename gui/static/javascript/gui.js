@@ -163,6 +163,7 @@ function deleteConstraint(elem) {
 	};
 
 function resetConstraint(elem) {
+		console.log("Resetting constraint!")
 		// Make constraint blank
 		// find parent node which is the constraint container
 		let parent_container = elem.parentNode;
@@ -486,6 +487,8 @@ window.onclick = function(event) {
 }
 
 $('[contenteditable="true"]').keypress(function(e) {
+		console.log(e)
     var x = event.charCode || event.keyCode;
-    if (isNaN(String.fromCharCode(e.which)) && x!=46 || x===32 || x===13 || (x===46 && event.currentTarget.innerText.includes('.') || event.currentTarget.innerText.includes('-')) e.preventDefault();
+    if (isNaN(String.fromCharCode(e.which)) && x!=46 || x===32 || x===13 || (x===46 && event.currentTarget.innerText.includes('.') || event.currentTarget.innerText.includes('-'))) {
+     e.preventDefault();}
 });
