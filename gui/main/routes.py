@@ -12,7 +12,7 @@ import pandas as pd
 from seldonian.dataset import (SupervisedDataSet,
 	RLDataSet, DataSetLoader)
 from seldonian.spec import SupervisedSpec, RLSpec
-from seldonian.models import models
+from seldonian.models import models,objectives
 from seldonian.parse_tree.operators import measure_functions_dict
 from seldonian.parse_tree.parse_tree import ParseTree
 from seldonian.utils.io_utils import save_pickle
@@ -89,9 +89,11 @@ def process_constraints():
 			include_intercept_term=True)
 		
 		if sub_regime == 'classification':
-			model_class = models.LogisticRegressionModel
+			model = models.LogisticRegressionModel()
+			primary_objective = objectives.logistic_loss
 		elif sub_regime == 'regression':
-			model_class = models.LinearRegressionModel
+			model = models.LinearRegressionModel()
+			primary_objective = objectives.Mean_Squared_Error
 
 	elif regime == 'reinforcement_learning':
 		sub_regime = "all"
@@ -139,17 +141,18 @@ def process_constraints():
 	if regime == 'supervised_learning':
 		spec = SupervisedSpec(
 				dataset=dataset,
-				model_class=model_class,
+				model=model,
+				sub_regime=sub_regime,
 				frac_data_in_safety=0.6,
-				primary_objective=model_class.default_objective,
-				initial_solution_fn=model_class.fit,
+				primary_objective=primary_objective,
+				initial_solution_fn=model.fit,
 				parse_trees=parse_trees,
 				)
 	elif regime == 'reinforcement_learning':
 
 		spec = RLSpec(
 			dataset=dataset,
-			model_class=RL_model,
+			model=RL_model,
 			primary_objective=primary_objective,
 			frac_data_in_safety=0.6,
 			use_builtin_primary_gradient_fn=False,
