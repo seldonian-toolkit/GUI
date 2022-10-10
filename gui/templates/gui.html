@@ -70,7 +70,7 @@
 			<div class="buildelements" align="center" id="classification_funcs">
 				<!-- Show the preconfigured GPA fairness constraints 
 				(use javascript to hide/show depending on regime/sub-regime -->
-				{% set measure_functions = measure_functions_dict['supervised']['classification'] %}
+				{% set measure_functions = measure_functions_dict['supervised_learning']['classification'] %}
 
 				<div class="variable_group"> 
 					<h6>Preconfigured constraints: </h6>
@@ -115,7 +115,7 @@
 			</div>
 
 			<div class="buildelements" align="center" id="regression_funcs" style="display: none">
-				{% set measure_functions = measure_functions_dict['supervised']['regression'] %}
+				{% set measure_functions = measure_functions_dict['supervised_learning']['regression'] %}
 
 				<div class="variable_group"> 
 					<h5>Measure functions:</h5>
@@ -151,7 +151,7 @@
 			</div>
 
 			<div class="buildelements" align="center" id="RL_funcs" style="display: none">
-				{% set measure_functions = measure_functions_dict['RL']['all'] %}
+				{% set measure_functions = measure_functions_dict['reinforcement_learning']['all'] %}
 
 				<div class="variable_group"> 
 					<h5>Measure functions:</h5>
