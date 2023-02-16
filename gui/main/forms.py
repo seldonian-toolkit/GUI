@@ -20,7 +20,7 @@ class SetupForm(FlaskForm):
 	regime = SelectField('Regime:', 
 		choices=[
 		('supervised_learning','supervised learning'),
-		('reinforcement_learning','reinforcement learning')
+		# ('reinforcement_learning','reinforcement learning')
 		],
 		 validators=[InputRequired()]
 		 )
